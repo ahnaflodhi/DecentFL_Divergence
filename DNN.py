@@ -72,7 +72,6 @@ def client_update(client_model, optimizer, train_loader, num_epoch):
     return loss.item()
 
 def server_aggregate(client_models, num_labels, in_channels, dataset):
-    print("End of round- Entering aggregation")
     base_model = Net(num_labels, in_channels, dataset)
     base_dict = base_model.state_dict()
     for k in base_dict.keys():

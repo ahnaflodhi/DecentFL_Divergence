@@ -88,16 +88,18 @@ def federate(modes, num_rounds, num_epochs, num_nodes, cluster_def, num_labels, 
                     mode_trgloss_dict[mode][node].append(loss)
                 print('Local update for all nodes for mode-%s completed' %(mode))
                 print('Average train loss pre-aggregate %0.3g' %(cluster_loss/len(model_dict)))
-
+                print("End of round- Entering aggregation")
                 # Model Aggregation
                 if mode == 'd2d_clus':
                     model_aggregation(cluster_set, updated_model_dict, mode_model_dict, mode, dataset, testdata, testdata_dist, num_labels, in_channels)
                 else:
                     model_aggregation(aggregation_set, updated_model_dict, mode_model_dict, mode, dataset, testdata, testdata_dist, num_labels, in_channels)
-
+                
+                print(f'Aggregation for mode {mode} completed')
                 # Model testing: Accuracy and Loss calculation
                 test_losses, test_accs = model_testing(mode_model_dict[mode], testdata, testdata_dist)
-
+                print('Model_testing completed')
+                
                 for node, test_loss in test_losses.items():
                     mode_testloss_dict[mode][node].append(test_loss)
 
@@ -121,10 +123,9 @@ def federate(modes, num_rounds, num_epochs, num_nodes, cluster_def, num_labels, 
             mode_model_dict['sgd'] = copy.deepcopy(sgd_model)
             mode_trgloss_dict[mode].append(sgdtrgloss)
             mode_testloss_dict[mode].append(sgdtestloss)
-            mode_acc_dict[mode].append(sgdtestacc)
-            print('SGD Training completed-Moving to calculate Divergence')
+            mode_acc_dict[mode].append(sgdtestacc)     
         
-        
+        print(f'Training and aggregation for round {rnd} completed-Moving to calculate Divergence')
         sgd_divergence = calculate_divergence(modes, mode_model_dict, cluster_set, num_nodes)
         divergence_dict[rnd] = sgd_divergence
             
@@ -167,7 +168,7 @@ def model_aggregation(cluster_set, model_dict, main_dict, mode, dataset, test, t
         
         for node in cluster_nodes:
             main_dict[mode][node].load_state_dict(aggregated_model.state_dict())
-    print(f'Aggregation for mode {mode} completed')
+
         
 
 def model_testing(model_dict, testdata, test_dist):
@@ -177,6 +178,5 @@ def model_testing(model_dict, testdata, test_dist):
         loss, acc = test(model_dict[node].cuda(), DataLoader(DataSubset(testdata, test_dist, node)))          
         loss_dict[node] = loss
         acc_dict[node] = acc
-    print('Model_testing completed')
     return loss_dict, acc_dict
                
