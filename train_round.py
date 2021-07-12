@@ -63,10 +63,12 @@ def federate(modes, num_rounds, num_epochs, num_nodes, cluster_def, num_labels, 
     for rnd in range(num_rounds):
         for mode in modes:
            #  Run local update on models for each mode
+            # Distributed modes processing here
             if mode != 'sgd':
                 if rnd == 0:
                     if mode == 'd2d_clus':
                         num_clusters = cluster_def[0]
+                        cluster_set, cluster_graph = generate_clusters(mode, num_nodes, num_clusters, overlap = 0.75)
                     elif mode == 'd2d':
                         num_clusters = cluster_def[1]
                     elif mode == 'centr_fed':
@@ -74,8 +76,13 @@ def federate(modes, num_rounds, num_epochs, num_nodes, cluster_def, num_labels, 
                     else:
                         raise NotImplementedError('Environment Mode not correctly set. Choose either cluster_d2d or centr_fed')
                 
-                cluster_set, cluster_graph = generate_clusters(mode, num_nodes, num_clusters, overlap = 0.75)
-                updated_model_dict, loss_dict, cluster_loss = local_update(num_epochs, mode_model_dict[mode], num_labels, in_channels, dataset, traindata, traindata_dist)
+                if mode == 'd2d_clus':
+                    updated_model_dict, loss_dict, cluster_loss = local_update(num_epochs, mode_model_dict[mode], 
+                                                                               num_labels, in_channels, dataset, traindata, traindata_dist)
+                else:
+                    aggregation_set, aggregation_graph = generate_clusters(mode, num_nodes, num_clusters, overlap = 0.75)
+                    updated_model_dict, loss_dict, cluster_loss = local_update(num_epochs, mode_model_dict[mode], 
+                                                                               num_labels, in_channels, dataset, traindata, traindata_dist)
 
                 for node, loss in loss_dict.items():
                     mode_trgloss_dict[mode][node].append(loss)
@@ -83,7 +90,10 @@ def federate(modes, num_rounds, num_epochs, num_nodes, cluster_def, num_labels, 
                 print('Average train loss pre-aggregate %0.3g' %(cluster_loss/len(model_dict)))
 
                 # Model Aggregation
-                model_aggregation(cluster_set, updated_model_dict, mode_model_dict, mode, dataset, testdata, testdata_dist, num_labels, in_channels)
+                if mode == 'd2d_clus':
+                    model_aggregation(cluster_set, updated_model_dict, mode_model_dict, mode, dataset, testdata, testdata_dist, num_labels, in_channels)
+                else:
+                    model_aggregation(aggregation_set, updated_model_dict, mode_model_dict, mode, dataset, testdata, testdata_dist, num_labels, in_channels)
 
                 # Model testing: Accuracy and Loss calculation
                 test_losses, test_accs = model_testing(mode_model_dict[mode], testdata, testdata_dist)
@@ -95,6 +105,8 @@ def federate(modes, num_rounds, num_epochs, num_nodes, cluster_def, num_labels, 
                     mode_acc_dict[mode][node].append(test_acc)
 
                 print(f'Cycle {rnd} for mode {mode} completed')
+                
+        # SGD processing here
         else:
             # Execute SGD based learning for the same setting ( LR, epochs, full data)
 
@@ -116,7 +128,7 @@ def federate(modes, num_rounds, num_epochs, num_nodes, cluster_def, num_labels, 
         sgd_divergence = calculate_divergence(modes, mode_model_dict, cluster_set, num_nodes)
         divergence_dict[rnd] = sgd_divergence
             
-    return mode_model_dict, mode_acc_dict, mode_trgloss_dict, mode_testloss_dict, divergence_dict
+    return mode_model_dict, cluster_set, mode_acc_dict, mode_trgloss_dict, mode_testloss_dict, divergence_dict
             
                       
 def local_update(num_epochs, model_dict, num_labels, in_channels, dataset, train, train_dist): 
