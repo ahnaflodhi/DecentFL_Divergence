@@ -72,9 +72,8 @@ def D2DFL(dataset, mode_list, num_nodes, clusters, num_rounds, num_epochs, shard
 if __name__ == "__main__":
     model_collection, cluster_set, test_acc, trg_loss, test_loss, divergece_dict = D2DFL(dataset, modes,  nodes, clusters, 
                                                                                          rounds, epochs, shards, overlap_factor, dist_mode)
-    
-    plot_metric(test_acc, modes, dataset, 'Acc', dist_mode, cluster_set, num_nodes)
-    plot_metric(trg_loss, modes, dataset, 'Loss', dist_mode, cluster_set, num_nodes)
     save_results(dataset, dist_mode, test_acc, trg_loss, divergence_dict, cluster_set)
+    plot_metric(test_acc, modes, dataset, 'Acc', dist_mode, cluster_set, nodes)
+    plot_metric(trg_loss, modes, dataset, 'Loss', dist_mode, cluster_set, nodes)
     
     

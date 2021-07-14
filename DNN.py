@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import networkx as nx
-from network import *
 import random
 
 import torch

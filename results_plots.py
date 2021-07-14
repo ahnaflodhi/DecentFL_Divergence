@@ -16,7 +16,7 @@ def final_list(cluster_set, num_nodes):
     return final_nodes
 
 def plot_metric(metric, modes, dataset_label, label, distmode, cluster_set, num_nodes):
-    timestr = time.strftime("%Y%m%d-%H")
+    timestr = time.strftime("%Y%m%d-%H%M")
     final_nodes = final_list(cluster_set, num_nodes)
     for mode in modes:
         if mode != 'sgd':
@@ -29,7 +29,7 @@ def plot_metric(metric, modes, dataset_label, label, distmode, cluster_set, num_
             plt.savefig(filename)
             
 def save_results(dataset_label, distmode, test_acc, trg_loss, divergence_dict, cluster_set):
-    timestr = time.strftime("%Y%m%d-%H")
+    timestr = time.strftime("%Y%m%d-%H%M")
     filename = './Results/results'  + dataset_label +'_'+  mode + '_'+ '_' + distmode + '_' + timestr
     results = [test_acc, trg_loss, divergece_dict, cluster_set]
     f = open(filename, 'wb')
