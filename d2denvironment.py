@@ -6,7 +6,7 @@ def generate_clusters(mode, num_nodes, num_clusters, overlap):
     # Parameters for cluster configuration
     overlap_factor = overlap
     max_cluster_size = int(num_nodes/num_clusters * (1 + overlap_factor))
-    min_cluster_size = 3
+    min_cluster_size = 4
     cluster_set = [[] for _ in range(num_clusters)]      
 
     # Configure cluster sizes. Choose values randomly for a given max and min cluser_size
@@ -19,7 +19,7 @@ def generate_clusters(mode, num_nodes, num_clusters, overlap):
         # Assign nodes to each cluster randomly. Looped over cluster sizes
         for i in range(num_clusters):
             cluster_set[i] = np.random.choice(num_nodes, cluster_sizes[i], replace = False)
-    else:
+    elif num_clusters == 1:
         cluster_set[0] = list(range(num_nodes))
         
     # Initiate main graph    

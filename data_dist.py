@@ -13,10 +13,9 @@ def data_iid(dataset, num_nodes):
     :param num_users:
     :return: dict of image index
     """  
-    num_users = num_nodes
-    num_items = int(len(dataset)/num_users)
+    num_items = int(len(dataset)/num_nodes)
     dict_users, all_idxs = {}, [i for i in range(len(dataset))]
-    for i in range(num_users):
+    for i in range(num_nodes):
         dict_users[i] = set(np.random.choice(all_idxs, num_items,
                                              replace=False))
         all_idxs = list(set(all_idxs) - dict_users[i])
@@ -42,7 +41,7 @@ def get_dataset_indices(dataset, num_classes):
 #         idx_list.append(idx)
 #     return idx_list
 
-def data_noniid(dataset, num_users, shard_size):
+def data_noniid(dataset, num_users, num_imgs):
     """
     Sample non-I.I.D client data from MNIST dataset s.t clients
     have unequal amount of data
@@ -61,9 +60,6 @@ def data_noniid(dataset, num_users, shard_size):
 
         
 #     num_imgs = shard_size
-#     num_shards = int(len(dataset)//num_imgs)
-    # 50,000 training imgs --> 50 imgs/shard X 1200 shards
-    num_imgs = shard_size
     num_shards = int(len(dataset) / num_imgs) 
     idx_shard = [i for i in range(num_shards)]
     dict_users = {i: np.array([], dtype = int) for i in range(num_users)}
@@ -150,9 +146,9 @@ def niid_skew_dist(dataset, num_classes, num_nodes, skew, shard_size):
     """
 
     num_shards = int( len(dataset) / shard_size)
-    min_shards = 5
-    max_shards = int(len(dataset)/(num_nodes * shard_size))                
-    shard_sizes = np.random.randint(min_shards, max_shards, size = num_nodes)                
+    min_shards = 20
+    max_shards = 80               
+    shard_sizes = np.random.randint(min_shards, max_shards, size = num_nodes)
     
     #Initialize distribution dictionary
     niid_skew = {key:None for key in list(range(num_nodes))}
@@ -165,11 +161,13 @@ def niid_skew_dist(dataset, num_classes, num_nodes, skew, shard_size):
     for node in range(num_nodes):
         if skew == 1:
              idx = random.sample(indx_list[assigned_classes[node]], shard_sizes[node]*shard_size)
+             np.random.shuffle(idx)
         elif skew > 1:
             assigned = random.sample(range(num_classes), skew)
             idx = []
             for skew_set in range(skew):
-                idx += random.sample(indx_list[assigned[skew_set]], int(shard_sizes[node]/skew))
+                idx += random.sample(indx_list[assigned[skew_set]], int(shard_sizes[node]/skew)*shard_size)
+                np.random.shuffle(idx)
         niid_skew[node] = idx
-        
+            
     return niid_skew

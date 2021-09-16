@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import copy
+from tqdm import tqdm
 
 import torch
 import torch.nn as nn
@@ -13,170 +14,144 @@ from DNN import *
 from data_utils import *
 from d2denvironment import *
 
-def federate(modes, num_rounds, num_epochs, num_nodes, cluster_def, num_labels, in_channels, traindata, traindata_dist, testdata, testdata_dist, wt_init = 'same'):
+def federate(dataset, modes, num_rounds, num_epochs, num_nodes, cluster_def, num_labels, in_channels, traindata, traindata_dist, testdata, testdata_dist, batch_size, 
+             test_batch_size, wt_init = 'same'):
     #### Initialize DNN models at each node. 
     """ Instantiate the models using same weights or different weights (default wt_init = 'same').
         The node-model dictionary(model_collection) is then created.
         A randomly chosen cluster is required to perform local updates and aggregate cluster models after num_epochs and 
         the process is repeated num_cycles times.
     """
+    #modes, dataset, num_labels, in_channels, num_nodes, num_rounds, wt_init
+    mode_model_dict, mode_trgloss_dict, mode_testloss_dict, mode_avgloss_dict, mode_acc_dict, mode_avgacc_dict, divergence_dict = dict_creator(modes, dataset, 
+                                                                                                               num_labels, in_channels, num_nodes, num_rounds, wt_init)
     
-    source_data = type(traindata)
-    if 'mnist' in str(source_data):
-        dataset = 'mnist'
-    elif 'cifar' in str(source_data):
-        dataset = 'cifar'
-        
-    # Same weight initialization
-    if wt_init == 'same':       
-        same_wt_basemodel = Net(num_labels, in_channels, dataset)
-        model_dict = {i:copy.deepcopy(same_wt_basemodel) for i in range(num_nodes)}
-    elif wt_init == 'diff':
-        model_dict = {i:Net(num_labels, in_channels, dataset) for i in range(num_nodes)}
-    
-    recorder = {key:[] for key in range(num_nodes)}
-    ## Model Dictionary for each of the Fed Learning Modes
-    ## Model Dictionary Initialization
-
-    for key in modes:
-        mode_model_dict = {key:None}
-        mode_trgloss_dict = {key:None}
-        mode_testloss_dict = {key:None}
-        mode_acc_dict = {key:None}
-
-    divergence_dict = {key:None for key in range(num_rounds)}
-    
-    # Create separate copies for each mode
-    for mode in modes:
-        if mode != 'sgd':
-            mode_model_dict[mode] = copy.deepcopy(model_dict)
-            mode_trgloss_dict[mode] = copy.deepcopy(recorder)
-            mode_testloss_dict[mode] = copy.deepcopy(recorder)
-            mode_acc_dict[mode] = copy.deepcopy(recorder)
-        elif mode == 'sgd':
-            mode_model_dict[mode] = None
-            mode_trgloss_dict[mode] = []
-            mode_testloss_dict[mode] = []
-            mode_acc_dict[mode] = []
-            
-    
+    # Main Local update and federation round
     for rnd in range(num_rounds):
         for mode in modes:
+            print(f'Starting update and aggregation for {mode}')
            #  Run local update on models for each mode
             # Distributed modes processing here
             if mode != 'sgd':
-                if rnd == 0:
-                    if mode == 'd2d_clus':
-                        num_clusters = cluster_def[0]
-                        cluster_set, cluster_graph = generate_clusters(mode, num_nodes, num_clusters, overlap = 0.75)
-                    elif mode == 'd2d':
-                        num_clusters = cluster_def[1]
-                    elif mode == 'centr_fed':
-                        num_clusters = cluster_def[2]
-                    else:
-                        raise NotImplementedError('Environment Mode not correctly set. Choose either cluster_d2d or centr_fed')
+                if rnd == 0 and mode == 'd2d_clus':
+                    num_clusters = cluster_def[mode]
+                    cluster_set, cluster_graph = generate_clusters(mode, num_nodes, num_clusters, overlap = 0.75)
+                    print(f'The cluster configuration for {mode} is {cluster_set}')
+                #num_epochs, model_dict, node_loss, num_labels, in_channels, train, train_dist, batch_size
+                client_models = local_update(dataset, num_epochs, mode_model_dict[mode], mode_trgloss_dict[mode], num_labels,
+                                             in_channels, traindata, traindata_dist, rnd, batch_size)
+
+                load_dict(mode_model_dict[mode], client_models)
+                del client_models
                 
+                cluster_loss = {key:[] for key in range(len(cluster_set))}
+                global_avg_loss = 0
+                for cluster_id, cluster_nodes in enumerate(cluster_set):
+                    cluster_avg_loss = 0 
+                    for node in cluster_nodes:
+                        avg_loss = 0
+                        for epoch in range(num_epochs):
+                            avg_loss += mode_trgloss_dict[mode][node][-1*(epoch + 1)]
+                        avg_loss = avg_loss / num_epochs
+#                         print(f'For mode {mode}, the average loss for node-{node} is {avg_loss:0.5f}')
+                        cluster_avg_loss += avg_loss
+                    cluster_avg_loss = cluster_avg_loss / len(cluster_nodes)
+                    print(f'For mode {mode}, the average cluster loss for cluster-{cluster_id} is {cluster_avg_loss:0.5f}')
+                    cluster_loss[cluster_id].append(cluster_avg_loss)
+                    global_avg_loss += cluster_avg_loss
+                global_avg_loss = global_avg_loss / num_clusters
+                print(f'For mode {mode}, the average global loss for {global_avg_loss:0.5f}')
+                mode_avgloss_dict[mode].append(global_avg_loss)
+                
+                # Model Aggregation
+                #(cluster_set, main_dict, dataset, num_labels, in_channels)
                 if mode == 'd2d_clus':
-                    updated_model_dict, loss_dict, cluster_loss = local_update(num_epochs, mode_model_dict[mode], 
-                                                                               num_labels, in_channels, dataset, traindata, traindata_dist)
+                    model_aggregation(cluster_set, mode_model_dict[mode])
                 else:
                     aggregation_set, aggregation_graph = generate_clusters(mode, num_nodes, num_clusters, overlap = 0.75)
-                    updated_model_dict, loss_dict, cluster_loss = local_update(num_epochs, mode_model_dict[mode], 
-                                                                               num_labels, in_channels, dataset, traindata, traindata_dist)
-
-                for node, loss in loss_dict.items():
-                    mode_trgloss_dict[mode][node].append(loss)
-                print('Local update for all nodes for mode-%s completed' %(mode))
-                print('Average train loss pre-aggregate %0.3g' %(cluster_loss/len(model_dict)))
-                print("End of round- Entering aggregation")
-                # Model Aggregation
-                if mode == 'd2d_clus':
-                    model_aggregation(cluster_set, updated_model_dict, mode_model_dict, mode, dataset, testdata, testdata_dist, num_labels, in_channels)
-                else:
-                    model_aggregation(aggregation_set, updated_model_dict, mode_model_dict, mode, dataset, testdata, testdata_dist, num_labels, in_channels)
+                    model_aggregation(aggregation_set, mode_model_dict[mode])
                 
-                print(f'Aggregation for mode {mode} completed')
                 # Model testing: Accuracy and Loss calculation
-                test_losses, test_accs = model_testing(mode_model_dict[mode], testdata, testdata_dist)
-                print('Model_testing completed')
-                
-                for node, test_loss in test_losses.items():
-                    mode_testloss_dict[mode][node].append(test_loss)
+                model_testing(mode_model_dict[mode], testdata, testdata_dist, mode_acc_dict[mode], mode_avgacc_dict[mode])
 
-                for node, test_acc in test_accs.items():
-                    mode_acc_dict[mode][node].append(test_acc)
-
-                print(f'Cycle {rnd} for mode {mode} completed')
+                print(f'Round {rnd} for mode {mode} completed \n')
                 
         # SGD processing here
-        else:
-            # Execute SGD based learning for the same setting ( LR, epochs, full data)
-
-            sgd_model = Net(num_labels, in_channels, dataset).cuda()
-            trainloader = DataLoader(traindata)
-            testloader = DataLoader(testdata)
-            sgd_model_optim = optim.SGD(sgd_model.parameters(), lr = 0.01)
-            sgdtrgloss = client_update(sgd_model, sgd_model_optim, trainloader, num_epochs)
-
-            sgdtestloss, sgdtestacc = test(sgd_model, DataLoader(testdata))
-                    
-            mode_model_dict['sgd'] = copy.deepcopy(sgd_model)
-            mode_trgloss_dict[mode].append(sgdtrgloss)
-            mode_testloss_dict[mode].append(sgdtestloss)
-            mode_acc_dict[mode].append(sgdtestacc)     
-        
-        print(f'Training and aggregation for round {rnd} completed-Moving to calculate Divergence')
+            elif mode == 'sgd':
+                # Execute SGD based learning for the same setting ( LR, epochs, full data)s
+                # num_labels, in_channels, dataset, traindata, testdata, model,  num_epochs, trg_loss, mode_acc, divergence, batch_size
+                sgd_model = sgd_stage(num_labels, in_channels, dataset, traindata, testdata, mode_model_dict[mode], num_epochs,
+                                      mode_trgloss_dict[mode], mode_acc_dict[mode], mode_avgacc_dict[mode], divergence_dict[rnd], batch_size)
+                mode_model_dict[mode].load_state_dict(sgd_model.state_dict())
+                avg_sgdloss =0
+                for epoch in range(num_epochs):
+                    avg_sgdloss += mode_trgloss_dict[mode][-1*(epoch + 1)]
+                avg_sgdloss = avg_sgdloss / num_epochs
+                mode_avgloss_dict[mode].append(avg_sgdloss)
+                        
+        print(f'Training and aggregation completed-Moving to calculate Divergence')
         sgd_divergence = calculate_divergence(modes, mode_model_dict, cluster_set, num_nodes)
-        divergence_dict[rnd] = sgd_divergence
+        divergence_dict[rnd] = sgd_divergence = sgd_divergence
             
-    return mode_model_dict, cluster_set, mode_acc_dict, mode_trgloss_dict, mode_testloss_dict, divergence_dict
-            
+    return mode_model_dict, cluster_set, mode_acc_dict, mode_avgacc_dict, mode_trgloss_dict, mode_avgloss_dict, divergence_dict
+
+def load_dict(target_models, source_models):
+    """
+    Input: target_model_dict, source_model_dict
+    Takes a dictionary of target and source models.
+    Loads the state of source models onto target models.
+    """
+    for node, model in source_models.items():
+        target_models[node].load_state_dict(model.state_dict())
                       
-def local_update(num_epochs, model_dict, num_labels, in_channels, dataset, train, train_dist): 
-    client_models = [Net(num_labels, in_channels, dataset).cuda() for _ in range(len(model_dict))]
-#     client_models_dict = dict(zip(list(range(len(client_models))), client_models))
-    opt = [optim.SGD(model.parameters(), lr = 0.001) for model in client_models]
-#     opt_dict = dict(zip(list(range(len(model_dict))), opt))
-    for node, model in model_dict.items():
-            client_models[node].load_state_dict(model_dict[node].state_dict())       
+def local_update(dataset, num_epochs, model_dict, node_trgloss, num_labels, in_channels, train, train_dist, rnd, batch_size):
+    client_models = {node:Net(num_labels, in_channels, dataset).cuda() for node in range(len(model_dict))}
+    opt = [optim.SGD(model.parameters(), lr = 0.01) for _, model in client_models.items()]
+    
+    load_dict(client_models, model_dict)    
+    for node, client_model in client_models.items():
+        #client_model, optimizer, train_loader, loss_list, num_epochs):
+        client_update(client_model, opt[node], DataLoader(DataSubset(train, train_dist, node)), node_trgloss[node], num_epochs)
+        print(f' Loss for node {node} in the round-epoch {rnd} is {node_trgloss[node][-1]:0.5f}')
+    return client_models
 
-    loss_dict = {key: [] for key in range(len(model_dict))}
-    cumm_loss = 0
-    for node, client_model in enumerate(client_models):
-        loss = client_update(client_model, opt[node], DataLoader(DataSubset(train, train_dist, node)), num_epochs)
-        loss_dict[node].append(loss)
-        cumm_loss += loss         
-       
-    return client_models, loss_dict, cumm_loss
-        
-
-def model_aggregation(cluster_set, model_dict, main_dict, mode, dataset, test, test_dist, num_labels, in_channels):
-    test_loss_dict = {key: [] for key in range(len(model_dict))}
-    test_acc_dict = {key: [] for key in range(len(model_dict))}
-#     if mode =='d2d_clus' or mode == 'centr_fed':
-#         agg_order = random.sample(range(0, len(cluster_set)), len(cluster_set))
-#     else:
-#         raise NotImplementedError('D2D/P2P aggregation methods not implemented')
-    agg_order = random.sample(range(0, len(cluster_set)), len(cluster_set))
-    aggregated_models = [Net(num_labels, in_channels, dataset) for i in range(len(cluster_set))]
+def model_aggregation(cluster_set, main_dict):
+    agg_order = random.sample(range(len(cluster_set)), len(cluster_set))
     
     for cluster_id in agg_order:
         cluster_nodes = cluster_set[cluster_id]
-        cluster_models = [model_dict[i] for i in cluster_nodes]
         # server aggregate
-        aggregated_model = server_aggregate(cluster_models, num_labels, in_channels, dataset)
+        aggregated_model = server_aggregate(main_dict, cluster_nodes)
         
         for node in cluster_nodes:
-            main_dict[mode][node].load_state_dict(aggregated_model.state_dict())
-
+            main_dict[node].load_state_dict(aggregated_model.state_dict())
         
+        del aggregated_model
 
-def model_testing(model_dict, testdata, test_dist):
-    loss_dict = {k:None for k in range(len(model_dict))}
-    acc_dict = {k:None for k in range(len(model_dict))}
-    for node in range(len(model_dict)):
-        loss, acc = test(model_dict[node].cuda(), DataLoader(DataSubset(testdata, test_dist, node)))          
-        loss_dict[node] = loss
-        acc_dict[node] = acc
-    return loss_dict, acc_dict
+def sgd_stage(num_labels, in_channels, dataset, traindata, testdata, model,  num_epochs, trg_loss, mode_acc, avg_acc_dict, divergence, batch_size):
+    trainloader = DataLoader(traindata, batch_size = batch_size)
+    testloader = DataLoader(testdata)
+    sgd_model = Net(num_labels, in_channels, dataset).cuda()
+    sgd_model.load_state_dict(model.state_dict())
+    
+    sgd_model_optim = optim.SGD(sgd_model.parameters(), lr = 0.01)
+    client_update(sgd_model, sgd_model_optim, trainloader, trg_loss, num_epochs)
+
+    loss, acc = test(sgd_model, DataLoader(testdata))
+    mode_acc.append(acc)
+    avg_acc_dict.append(acc)
+    print(f'Accuracy for SGD is {acc:0.5f}')
+
+    return sgd_model
+        
+def model_testing(model_dict, testdata, test_dist, acc_dict, avg_acc_dict):
+    avg_acc = 0
+    for node, model in model_dict.items():
+        loss, acc = test(model, DataLoader(DataSubset(testdata, test_dist, node)))
+        acc_dict[node].append(acc)
+        print(f'Accuracy for node{node} is {acc:0.5f}')
+        avg_acc += acc
+    avg_acc = avg_acc / len(model_dict)
+    avg_acc_dict.append(avg_acc)
+#         print(f'Test loss for node{node} is {loss:0.5f}')
                
