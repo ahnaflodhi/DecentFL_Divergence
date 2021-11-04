@@ -2,6 +2,12 @@ import time
 import matplotlib.pyplot as plt
 import pickle
 import copy
+import networkx as nx
+
+def title_gen(label, dataset_label, mode, distmode, num_nodes, cluster, epochs):
+    timestr = time.strftime("%Y%m%d-%H%M")
+    filename = './Results/No_Strag/' + label + '_' + dataset_label +'_'+  mode + '_' + distmode + '_' + 'n' + str(num_nodes) + '_' + 'c' + str(cluster) + '_' + 'e' + str(epochs) + '_' + timestr
+    return filename
 
 def final_list(cluster_set, num_nodes):
     # Remove nodes not part of any cluster
@@ -27,7 +33,8 @@ def plot_metric(metric, modes, dataset_label, label, distmode, cluster_set, num_
                 plt.grid()
                 plt.plot(metric[mode][node])
                 plt.title('%s for mode %s' %(label, mode))
-            filename = './Results/' + label + '_' + dataset_label +'_'+  mode + '_' + distmode + '_' + 'n' + str(num_nodes) + '_' + 'c' + str(cluster) + '_' + 'e' + str(epochs) + '_' + timestr
+                filename = title_gen(label, dataset_label, mode, distmode, num_nodes, cluster, epochs)
+#             filename = './Results/' + label + '_' + dataset_label +'_'+  mode + '_' + distmode + '_' + 'n' + str(num_nodes) + '_' + 'c' + str(cluster) + '_' + 'e' + str(epochs) + '_' + timestr
             plt.savefig(filename)
             
 def plot_avgs(metric, modes, dataset_label, label, distmode, num_nodes, epochs,  cluster):
@@ -37,15 +44,21 @@ def plot_avgs(metric, modes, dataset_label, label, distmode, num_nodes, epochs, 
         plt.grid()
         plt.plot(metric[mode])
         plt.title('%s for mode %s' %(label, mode))
-        filename = './Results/' + label + '_' + dataset_label +'_'+  mode + '_' + distmode + '_' + '_' + 'n' + str(num_nodes) + '_' + 'c' + str(cluster) + '_' + 'e' + str(epochs) + '_' + timestr
+        filename = title_gen(label, dataset_label, mode, distmode, num_nodes, cluster, epochs)
+
+#         filename = './Results/' + label + '_' + dataset_label +'_'+  mode + '_' + distmode + '_' +  'n' + str(num_nodes) + '_' + 'c' + str(cluster) + '_' + 'e' + str(epochs) + '_' + timestr
         plt.savefig(filename)
 # dataset, dist_mode, test_acc, trg_loss, avg_loss, divergence_dict, cluster_set            
 def save_results(dataset_label, distmode, test_acc, test_avgacc, trg_loss, avg_loss, divergence_dict, cluster_set, num_nodes, cluster, epochs):
     timestr = time.strftime("%Y%m%d-%H%M")
-    filename = './Results/results'  + dataset_label + '_' + distmode + '_' + 'n' + str(num_nodes) + '_' + 'c' + str(cluster) + '_' + 'e' + str(epochs) + '_' +  timestr
+    folder = './Results_2/' 
+    filename =  dataset_label + '_' + distmode + '_' + 'n' + str(num_nodes) + '_' + 'c' + str(cluster) + '_' + 'e' + str(epochs) + '_' +  timestr
+    final_path = folder +filename
     results = [test_acc, trg_loss, avg_loss, divergence_dict, test_avgacc, cluster_set]
-    f = open(filename, 'wb')
+#     results = {'test_acc':test_acc, 'trg_loss':trg_loss, 'avg_loss':avg_loss, 'divergence_dict':divergence_dict, 'test_avgacc':test_avgacc, 'cluster_set':cluster_set}
+    f = open(final_path, 'wb')
     pickle.dump(results, f)
+    return filename
     
 def plot_bar(file_name, file_path, dest_path):
     """ 
@@ -135,4 +148,11 @@ def plot_bar(file_name, file_path, dest_path):
     plt.ylabel(title_div, size =20)
     plt.title(title_div, size =30)
     plt.savefig(dest_path + title_div + cats[2])
+
+def plot_cluster(graph, dataset, dist_mode, nodes, epochs, num_clusters):    
+    nx.draw(graph, with_labels = True, font_weight = 'bold')
+    plt.title('Clustered D2D Setting' + + 'n' + nodes + '_' + 'e' + epochs + '_' + 'c' + num_clusters + 
+              dataset + '_' + distmode + '_' + 'n' + nodes + '_' + 'e' + epochs + '_' + 'c' + num_clusters )
+    file_name = './Results/No_Strag/'+ dataset + '_' + dist_mode + '_' + 'n' + nodes + '_' + 'e' + epochs + '_' + 'c' + num_clusters
+    plt.savefig(file_name)
     

@@ -14,17 +14,17 @@ import torch.optim as optim
 class Net(nn.Module):
     def __init__(self, num_classes, in_ch, dataset):
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(in_ch, 32, 3, 1)
-        self.conv2 = nn.Conv2d(32, 64, 3, 1)
-        self.dropout1 = nn.Dropout(0.2)
-        self.dropout2 = nn.Dropout(0.1)
-        if dataset == 'mnist':
-            self.fc1 = nn.Linear(9216, 128)
-            self.fc2 = nn.Linear(128, num_classes)
+        self.conv1 = nn.Conv2d(in_ch, 10, 5, 1)
+        self.conv2 = nn.Conv2d(10, 20, 5, 1)
+        self.dropout1 = nn.Dropout(0.1)
+        self.dropout2 = nn.Dropout(0.2)
+        if dataset == 'mnist' or dataset == 'fashion':
+            self.fc1 = nn.Linear(2000, 1000)
+            self.fc2 = nn.Linear(1000, num_classes)
         elif dataset == 'cifar':
-            self.fc1 = nn.Linear(12544, 128)
-            self.fc2 = nn.Linear(128, num_classes)
-
+            self.fc1 = nn.Linear(2880, 1440)
+            self.fc2 = nn.Linear(1440, num_classes)
+            
     def forward(self, x):
         x = self.conv1(x)
         x = F.relu(x)
@@ -64,7 +64,7 @@ class Net(nn.Module):
     
 def client_update(client_model, optimizer, train_loader, loss_list, num_epochs):
     client_model.train()
-    for epoch in tqdm(range(num_epochs)):
+    for epoch in range(num_epochs):
         epoch_loss = 0.0
         batch_loss = []
         for batch_idx, (data, target) in enumerate(train_loader):
@@ -146,32 +146,51 @@ def model_checker(model1, model2):
     if models_differ == 0:
         print('Models match')
 
-def calculate_divergence(modes, main_model_dict, cluster_set, num_nodes):
+def calculate_divergence(modes, main_model_dict, cluster_set, num_nodes, divergence_results):
     centr_fed_ref = np.random.randint(0, num_nodes)
     for mode in modes:
         basemodel_keys = main_model_dict[mode][0].state_dict().keys()
         break
-    diverg_recorder = {key:[] for key in basemodel_keys}
-    # Dictionary to be accessed by mode-key-divergence (at the end of each round)
-    sgdmode_divergence_results = {mode:diverg_recorder for mode in modes if mode != 'sgd'}
-    # Do not inlude a list of nodes for SGD model
-    sample_nodes = {mode:[] for mode in modes if mode != 'sgd'}
-    for mode, _ in sample_nodes.items():
-        for cluster_id in range(len(cluster_set)):
-            sample_nodes[mode].append(random.choice(cluster_set[cluster_id]))
-    
-    # Intra-cluster same-mode divergence
-    # i and j are node indices.
-    ref_model = main_model_dict['sgd']
+     # Structure of Dictionary   
+    # divergence_results {mode: {node:{layer:[divergence for each round]}}       
+                                      
+    ref_model = main_model_dict['SGD']
     ref_weight = extract_weights(ref_model)
+    
     for mode in modes:
-        if mode != 'sgd':
-            for target_id in sample_nodes[mode]:
-                target_model = main_model_dict[mode][target_id].cuda()
+        if mode != 'SGD':
+            for target_node in range(num_nodes):
+                target_model = main_model_dict[mode][target_node].cuda()
                 target_weight = extract_weights(target_model)
-                for key in ref_weight.keys():                          
-                    sgdmode_divergence_results[mode][key].append(torch.linalg.norm(ref_weight[key] - target_weight[key]))
-    print('SGD Divergence concluded')
-    return  sgdmode_divergence_results    
+                for layer in ref_weight.keys():                          
+                    divergence_results[mode][target_node][layer].append(torch.linalg.norm(ref_weight[layer] - target_weight[layer]))
+
+    
+    
+#     centr_fed_ref = np.random.randint(0, num_nodes)
+#     for mode in modes:
+#         basemodel_keys = main_model_dict[mode][0].state_dict().keys()
+#         break
+#     diverg_recorder = {key:[] for key in basemodel_keys}
+#     # Dictionary to be accessed by mode-key-divergence (at the end of each round)
+#     sgdmode_divergence_results = {mode:diverg_recorder for mode in modes if mode != 'SGD'}
+#     # Do not inlude a list of nodes for SGD model
+#     sample_nodes = {mode:[] for mode in modes if mode != 'SGD'}
+#     for mode, _ in sample_nodes.items():
+#         for cluster_id in range(len(cluster_set)):
+#             sample_nodes[mode].append(random.choice(cluster_set[cluster_id]))
+    
+#     # Intra-cluster same-mode divergence
+#     # i and j are node indices.
+#     ref_model = main_model_dict['SGD']
+#     ref_weight = extract_weights(ref_model)
+#     for mode in modes:
+#         if mode != 'SGD':
+#             for target_id in sample_nodes[mode]:
+#                 target_model = main_model_dict[mode][target_id].cuda()
+#                 target_weight = extract_weights(target_model)
+#                 for key in ref_weight.keys():                          
+#                     sgdmode_divergence_results[mode][key].append(torch.linalg.norm(ref_weight[key] - target_weight[key]))
+    return  divergence_results    
     
                      
