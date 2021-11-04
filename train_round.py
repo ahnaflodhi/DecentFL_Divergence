@@ -52,6 +52,7 @@ def federate(dataset, modes, num_rounds, num_epochs, num_nodes, cluster_def, num
                         temp = random.sample(cluster_list, target_clusters[i])
                         cluster_list = [item for item in cluster_list if item not in temp]
                         server_targets.append(temp)
+                    print(f'Server set with {server_targets} generated')
 
     #                 if mode != 'D2D_Clus':       
                 #num_epochs, model_dict, node_loss, num_labels, in_channels, train, train_dist, batch_size

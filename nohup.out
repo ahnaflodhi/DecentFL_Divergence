@@ -2470,4 +2470,550 @@ Accuracy for node4 is 0.10000100%|██████████| 2/2 [00:24<00
   0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:18<00:00,  9.10s/it]100%|██████████| 2/2 [00:18<00:00,  9.12s/it]
   0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:03<00:03,  3.20s/it]100%|██████████| 2/2 [00:06<00:00,  3.04s/it]100%|██████████| 2/2 [00:06<00:00,  3.07s/it]
   0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:08<00:08,  8.58s/it] 50%|█████     | 1/2 [00:08<00:08,  8.61s/it]100%|██████████| 2/2 [00:16<00:00,  8.36s/it]100%|██████████| 2/2 [00:16<00:00,  8.39s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:06<00:06,  6.00s/it]100%|██████████| 2/2 [00:17<00:00,  8.56s/it]100%|██████████| 2/2 [00:17<00:00,  8.57s/it]
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:11<00:00,  5.96s/it]100%|██████████| 2/2 [00:11<00:00,  5.96s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:09<00:09,  9.92s/it] 50%|█████     | 1/2 [00:15<00:15, 15.94s/it]100%|██████████| 2/2 [00:19<00:00,  9.96s/it]100%|██████████| 2/2 [00:19<00:00,  9.95s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:02<00:02,  2.03s/it]100%|██████████| 2/2 [00:28<00:00, 13.80s/it]100%|██████████| 2/2 [00:28<00:00, 14.12s/it]
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:03<00:00,  1.98s/it]100%|██████████| 2/2 [00:03<00:00,  1.99s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:09<00:09,  9.46s/it] 50%|█████     | 1/2 [00:10<00:10, 10.87s/it]100%|██████████| 2/2 [00:18<00:00,  9.31s/it]100%|██████████| 2/2 [00:18<00:00,  9.34s/it]
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:21<00:00, 10.77s/it]100%|██████████| 2/2 [00:21<00:00, 10.78s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:02<00:02,  2.86s/it]100%|██████████| 2/2 [00:05<00:00,  2.94s/it]100%|██████████| 2/2 [00:05<00:00,  2.93s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:02<00:02,  2.13s/it]100%|██████████| 2/2 [00:04<00:00,  2.02s/it]100%|██████████| 2/2 [00:04<00:00,  2.03s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:09<00:09,  9.81s/it] 50%|█████     | 1/2 [00:03<00:03,  3.29s/it]100%|██████████| 2/2 [00:06<00:00,  3.35s/it]100%|██████████| 2/2 [00:06<00:00,  3.34s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:02<00:02,  2.64s/it]100%|██████████| 2/2 [00:19<00:00,  9.81s/it]100%|██████████| 2/2 [00:19<00:00,  9.81s/it]
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:05<00:00,  2.68s/it]100%|██████████| 2/2 [00:05<00:00,  2.67s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:02<00:02,  2.78s/it] 50%|█████     | 1/2 [00:03<00:03,  3.42s/it]100%|██████████| 2/2 [00:05<00:00,  2.84s/it]100%|██████████| 2/2 [00:05<00:00,  2.83s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:02<00:02,  2.00s/it]100%|██████████| 2/2 [00:07<00:00,  3.67s/it]100%|██████████| 2/2 [00:07<00:00,  3.63s/it]
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:03<00:00,  1.99s/it]100%|██████████| 2/2 [00:03<00:00,  1.99s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:04<00:04,  4.28s/it]100%|██████████| 2/2 [00:08<00:00,  3.99s/it]100%|██████████| 2/2 [00:08<00:00,  4.03s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:06<00:06,  6.42s/it] 50%|█████     | 1/2 [00:02<00:02,  2.45s/it]100%|██████████| 2/2 [00:05<00:00,  2.53s/it]100%|██████████| 2/2 [00:05<00:00,  2.52s/it]
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:13<00:00,  6.74s/it]100%|██████████| 2/2 [00:13<00:00,  6.69s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:03<00:03,  3.86s/it] 50%|█████     | 1/2 [00:05<00:05,  5.03s/it]100%|██████████| 2/2 [00:07<00:00,  3.70s/it]100%|██████████| 2/2 [00:07<00:00,  3.73s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:01<00:01,  1.82s/it]100%|██████████| 2/2 [00:03<00:00,  1.82s/it]100%|██████████| 2/2 [00:03<00:00,  1.82s/it]
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:09<00:00,  4.95s/it]100%|██████████| 2/2 [00:09<00:00,  4.97s/it] 50%|█████     | 1/2 [00:02<00:02,  2.90s/it][[0, 18, 39, 21, 13, 2, 8], [17, 26, 14, 20, 38, 1, 22], [33, 15, 34, 11, 37, 13, 18, 17, 32], [12, 22, 5, 27, 7, 26, 38, 34], [24, 25, 9, 4, 37, 31], [10, 30, 35, 36, 2, 8, 19, 27], [16, 31, 3, 6, 32, 7, 1, 19, 26], [28, 23, 29, 19, 24]]
+The cluster configuration is [[0, 18, 39, 21, 13, 2, 8], [17, 26, 14, 20, 38, 1, 22], [33, 15, 34, 11, 37, 13, 18, 17, 32], [12, 22, 5, 27, 7, 26, 38, 34], [24, 25, 9, 4, 37, 31], [10, 30, 35, 36, 2, 8, 19, 27], [16, 31, 3, 6, 32, 7, 1, 19, 26], [28, 23, 29, 19, 24]]
+Starting update and aggregation for D2D_Clus
+For mode D2D_Clus, the average cluster loss for cluster-0 is 0.19032
+For mode D2D_Clus, the average cluster loss for cluster-1 is 0.21094
+For mode D2D_Clus, the average cluster loss for cluster-2 is 0.20296
+For mode D2D_Clus, the average cluster loss for cluster-3 is 0.18953
+For mode D2D_Clus, the average cluster loss for cluster-4 is 0.22335
+For mode D2D_Clus, the average cluster loss for cluster-5 is 0.18911
+For mode D2D_Clus, the average cluster loss for cluster-6 is 0.20751
+For mode D2D_Clus, the average cluster loss for cluster-7 is 0.20499
+For mode D2D_Clus, the average global loss for 0.20234
+[[9, 15, 3, 17, 37, 7, 2, 18, 25, 21], [8, 27, 19, 28, 22, 4, 14, 33, 38], [6, 12, 13, 5, 28, 15, 22], [10, 21, 26, 36, 20, 32, 3], [25, 0, 1, 14, 27, 11, 21, 30], [34, 11, 33, 21], [29, 4, 35, 30, 25, 37], [24, 18, 39, 31, 38, 16, 23, 0, 34, 3]]
+Accuracy for node0 is 0.69200
+Accuracy for node1 is 0.84000
+Accuracy for node2 is 0.68000
+Accuracy for node3 is 0.72000
+Accuracy for node4 is 0.66800
+Accuracy for node5 is 0.83600
+Accuracy for node6 is 0.76000
+Accuracy for node7 is 0.69600
+Accuracy for node8 is 0.73600
+Accuracy for node9 is 0.64800
+Accuracy for node10 is 0.65200
+Accuracy for node11 is 0.62800
+Accuracy for node12 is 0.81600
+Accuracy for node13 is 0.71600
+Accuracy for node14 is 0.86400
+Accuracy for node15 is 0.78400
+Accuracy for node16 is 0.69200
+Accuracy for node17 is 0.63200
+Accuracy for node18 is 0.68800
+Accuracy for node19 is 0.70400
+Accuracy for node20 is 0.68000
+Accuracy for node21 is 0.63600
+Accuracy for node22 is 0.76400
+Accuracy for node23 is 0.72400
+Accuracy for node24 is 0.74000
+Accuracy for node25 is 0.67600
+Accuracy for node26 is 0.62000
+Accuracy for node27 is 0.83600
+Accuracy for node28 is 0.80400
+Accuracy for node29 is 0.67600
+Accuracy for node30 is 0.67600
+Accuracy for node31 is 0.69600
+Accuracy for node32 is 0.64800
+Accuracy for node33 is 0.64400
+Accuracy for node34 is 0.74800
+Accuracy for node35 is 0.60400
+Accuracy for node36 is 0.66800
+Accuracy for node37 is 0.62400
+Accuracy for node38 is 0.72000
+Accuracy for node39 is 0.73200
+Round 0 for mode D2D_Clus completed 
+
+Training and aggregation completed-Moving to calculate Divergence
+Divergence for round-0 completed
+Starting update and aggregation for D2D
+For mode D2D, the average cluster loss for cluster-0 is 0.18981
+For mode D2D, the average cluster loss for cluster-1 is 0.21436
+For mode D2D, the average cluster loss for cluster-2 is 0.20842
+For mode D2D, the average cluster loss for cluster-3 is 0.19020
+For mode D2D, the average cluster loss for cluster-4 is 0.22740
+For mode D2D, the average cluster loss for cluster-5 is 0.18790
+For mode D2D, the average cluster loss for cluster-6 is 0.20840
+For mode D2D, the average cluster loss for cluster-7 is 0.20457
+For mode D2D, the average global loss for 0.20388
+Accuracy for node0 is 0.74800
+Accuracy for node1 is 0.79200
+Accuracy for node2 is 0.77600
+Accuracy for node3 is 0.59600
+Accuracy for node4 is 0.55200
+Accuracy for node5 is 0.61600
+Accuracy for node6 is 0.64400
+Accuracy for node7 is 0.79600
+Accuracy for node8 is 0.81200
+Accuracy for node9 is 0.56800
+Accuracy for node10 is 0.82400
+Accuracy for node11 is 0.64400
+Accuracy for node12 is 0.59600
+Accuracy for node13 is 0.62400
+Accuracy for node14 is 0.70400
+Accuracy for node15 is 0.64000
+Accuracy for node16 is 0.75200
+Accuracy for node17 is 0.69200
+Accuracy for node18 is 0.65200
+Accuracy for node19 is 0.75600
+Accuracy for node20 is 0.62400
+Accuracy for node21 is 0.72800
+Accuracy for node22 is 0.61600
+Accuracy for node23 is 0.60800
+Accuracy for node24 is 0.63600
+Accuracy for node25 is 0.55200
+Accuracy for node26 is 0.68800
+Accuracy for node27 is 0.80000
+Accuracy for node28 is 0.53200
+Accuracy for node29 is 0.56400
+Accuracy for node30 is 0.74000
+Accuracy for node31 is 0.79600
+Accuracy for node32 is 0.75200
+Accuracy for node33 is 0.62000
+Accuracy for node34 is 0.80000
+Accuracy for node35 is 0.74800
+Accuracy for node36 is 0.83200
+Accuracy for node37 is 0.67200
+Accuracy for node38 is 0.70400
+Accuracy for node39 is 0.59200
+Round 0 for mode D2D completed 
+
+Training and aggregation completed-Moving to calculate Divergence
+Divergence for round-0 completed
+Starting update and aggregation for HD2D
+For mode HD2D, the average cluster loss for cluster-0 is 0.19148
+For mode HD2D, the average cluster loss for cluster-1 is 0.21167
+For mode HD2D, the average cluster loss for cluster-2 is 0.20807
+For mode HD2D, the average cluster loss for cluster-3 is 0.18812
+For mode HD2D, the average cluster loss for cluster-4 is 0.22768
+For mode HD2D, the average cluster loss for cluster-5 is 0.18817
+For mode HD2D, the average cluster loss for cluster-6 is 0.20725
+For mode HD2D, the average cluster loss for cluster-7 is 0.20010
+For mode HD2D, the average global loss for 0.04056
+Accuracy for node0 is 0.80800
+Accuracy for node1 is 0.80000
+Accuracy for node2 is 0.81600
+Accuracy for node3 is 0.80800
+Accuracy for node4 is 0.84000
+Accuracy for node5 is 0.86400
+Accuracy for node6 is 0.74000
+Accuracy for node7 is 0.84400
+Accuracy for node8 is 0.81200
+Accuracy for node9 is 0.82800
+Accuracy for node10 is 0.80800
+Accuracy for node11 is 0.82000
+Accuracy for node12 is 0.82800
+Accuracy for node13 is 0.77600
+Accuracy for node14 is 0.82400
+Accuracy for node15 is 0.82400
+Accuracy for node16 is 0.78800
+Accuracy for node17 is 0.76000
+Accuracy for node18 is 0.78400
+Accuracy for node19 is 0.79600
+Accuracy for node20 is 0.84400
+Accuracy for node21 is 0.80000
+Accuracy for node22 is 0.81200
+Accuracy for node23 is 0.82400
+Accuracy for node24 is 0.80000
+Accuracy for node25 is 0.82400
+Accuracy for node26 is 0.82400
+Accuracy for node27 is 0.79600
+Accuracy for node28 is 0.80800
+Accuracy for node29 is 0.79600
+Accuracy for node30 is 0.82400
+Accuracy for node31 is 0.78800
+Accuracy for node32 is 0.80800
+Accuracy for node33 is 0.84000
+Accuracy for node34 is 0.82000
+Accuracy for node35 is 0.78000
+Accuracy for node36 is 0.79600
+Accuracy for node37 is 0.79600
+Accuracy for node38 is 0.82800
+Accuracy for node39 is 0.80400
+Round 0 for mode HD2D completed 
+
+Training and aggregation completed-Moving to calculate Divergence
+Divergence for round-0 completed
+Starting update and aggregation for Gossip
+For mode Gossip, the average cluster loss for cluster-0 is 0.18663
+For mode Gossip, the average cluster loss for cluster-1 is 0.21066
+For mode Gossip, the average cluster loss for cluster-2 is 0.20628
+For mode Gossip, the average cluster loss for cluster-3 is 0.18573
+For mode Gossip, the average cluster loss for cluster-4 is 0.22780
+For mode Gossip, the average cluster loss for cluster-5 is 0.18870
+For mode Gossip, the average cluster loss for cluster-6 is 0.20822
+For mode Gossip, the average cluster loss for cluster-7 is 0.20690
+For mode Gossip, the average global loss for 0.04052
+[array([14, 18]), array([ 3, 15]), array([16,  6]), array([25, 14]), array([38, 13]), array([25, 14]), array([39, 12]), array([18, 33]), array([10,  2]), array([ 8, 28]), array([27, 14]), array([ 7, 31]), array([12, 19]), array([5, 9]), array([15,  7]), array([23,  2]), array([20,  2]), array([30, 26]), array([ 2, 22]), array([36, 21]), array([12,  7]), array([28, 24]), array([12, 17]), array([34, 19]), array([ 6, 13]), array([ 2, 13]), array([10, 35]), array([11, 34]), array([ 9, 26]), array([22,  1]), array([ 5, 24]), array([35, 10]), array([32, 35]), array([19, 25]), array([35, 11]), array([ 3, 27]), array([29, 36]), array([14, 17]), array([24, 16]), array([33, 12])]
+Accuracy for node0 is 0.38000
+Accuracy for node1 is 0.09200
+Accuracy for node2 is 0.55200
+Accuracy for node3 is 0.52000
+Accuracy for node4 is 0.25600
+Accuracy for node5 is 0.61200100%|██████████| 2/2 [00:05<00:00,  2.89s/it]100%|██████████| 2/2 [00:05<00:00,  2.89s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:07<00:07,  7.54s/it]100%|██████████| 2/2 [00:15<00:00,  7.51s/it]100%|██████████| 2/2 [00:15<00:00,  7.51s/it]
   0%|          | 0/2 [00:00<?, ?it/s]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:03<00:03,  3.71s/it]100%|██████████| 2/2 [00:07<00:00,  3.72s/it]100%|██████████| 2/2 [00:07<00:00,  3.72s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:09<00:09,  9.40s/it] 50%|█████     | 1/2 [00:10<00:10, 10.57s/it]100%|██████████| 2/2 [00:18<00:00,  9.31s/it]100%|██████████| 2/2 [00:18<00:00,  9.32s/it]
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:21<00:00, 10.55s/it]100%|██████████| 2/2 [00:21<00:00, 10.55s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:11<00:11, 11.16s/it] 50%|█████     | 1/2 [00:08<00:08,  8.48s/it]100%|██████████| 2/2 [00:21<00:00, 10.95s/it]100%|██████████| 2/2 [00:21<00:00, 10.98s/it]
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:17<00:00,  8.84s/it]100%|██████████| 2/2 [00:17<00:00,  8.78s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:08<00:08,  8.95s/it] 50%|█████     | 1/2 [00:10<00:10, 10.40s/it]100%|██████████| 2/2 [00:17<00:00,  8.72s/it]100%|██████████| 2/2 [00:17<00:00,  8.76s/it]
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:20<00:00, 10.21s/it]100%|██████████| 2/2 [00:20<00:00, 10.24s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:03<00:03,  3.71s/it] 50%|█████     | 1/2 [00:10<00:10, 10.54s/it]100%|██████████| 2/2 [00:07<00:00,  3.86s/it]100%|██████████| 2/2 [00:07<00:00,  3.83s/it]
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:21<00:00, 10.73s/it]100%|██████████| 2/2 [00:21<00:00, 10.70s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:10<00:10, 10.03s/it] 50%|█████     | 1/2 [00:06<00:06,  6.51s/it]100%|██████████| 2/2 [00:19<00:00,  9.82s/it]100%|██████████| 2/2 [00:19<00:00,  9.85s/it]
+
+Accuracy for node5 is 0.10800
+Accuracy for node6 is 0.10000
+Accuracy for node7 is 0.08400
+Accuracy for node8 is 0.10400
+Accuracy for node9 is 0.10800
+Accuracy for node10 is 0.08400
+Accuracy for node11 is 0.06800
+Accuracy for node12 is 0.08000
+Accuracy for node13 is 0.09600
+Accuracy for node14 is 0.09200
+Accuracy for node15 is 0.11600
+Accuracy for node16 is 0.12800
+Accuracy for node17 is 0.12000
+Accuracy for node18 is 0.10800
+Accuracy for node19 is 0.10000
+Accuracy for node20 is 0.10400
+Accuracy for node21 is 0.12000
+Accuracy for node22 is 0.09600
+Accuracy for node23 is 0.09200
+Accuracy for node24 is 0.07200
+Accuracy for node25 is 0.08800
+Accuracy for node26 is 0.09200
+Accuracy for node27 is 0.08400
+Accuracy for node28 is 0.11200
+Accuracy for node29 is 0.10800
+Accuracy for node30 is 0.13200
+Accuracy for node31 is 0.13200
+Accuracy for node32 is 0.06800
+Accuracy for node33 is 0.08800
+Accuracy for node34 is 0.08400
+Accuracy for node35 is 0.10000
+Accuracy for node36 is 0.09200
+Accuracy for node37 is 0.09200
+Accuracy for node38 is 0.08400
+Accuracy for node39 is 0.11600
+Round 0 for mode Gossip completed 
+
+Training and aggregation completed-Moving to calculate Divergence
+Divergence for round-0 completed
+Starting update and aggregation for Centr_Fed
+For mode Centr_Fed, the average cluster loss for cluster-0 is 0.43465
+For mode Centr_Fed, the average cluster loss for cluster-1 is 0.44042
+For mode Centr_Fed, the average cluster loss for cluster-2 is 0.44472
+For mode Centr_Fed, the average cluster loss for cluster-3 is 0.44983
+For mode Centr_Fed, the average cluster loss for cluster-4 is 0.44473
+For mode Centr_Fed, the average cluster loss for cluster-5 is 0.44522
+For mode Centr_Fed, the average cluster loss for cluster-6 is 0.41012
+For mode Centr_Fed, the average cluster loss for cluster-7 is 0.48740
+For mode Centr_Fed, the average global loss for 0.08893
+Traceback (most recent call last):
+  File "Main_Fed.py", line 86, in <module>
+    model_collection, cluster_set, test_acc, test_avgacc, trg_loss, avg_loss, divergence_dict, cluster_set, cluster_graph = D2DFL(dataset, batch_size,
+  File "Main_Fed.py", line 79, in D2DFL
+    model_collection, cluster_set, test_acc, test_avgacc, trg_loss, avg_loss, divergence_dict, cluster_set, cluster_graph = federate(dataset, mode_list, num_rounds,
+  File "/home/ahnaf/Fed_Learn/Divergence/train_round.py", line 98, in federate
+    aggregation_set, aggregation_graph = generate_clusters(mode, num_nodes, num_clusters, overlap = 0.75)
+  File "/home/ahnaf/Fed_Learn/Divergence/d2denvironment.py", line 24, in generate_clusters
+    cluster_sizes = np.random.randint(min_cluster_size, max_cluster_size, size=num_clusters, dtype = int)
+  File "mtrand.pyx", line 746, in numpy.random.mtrand.RandomState.randint
+  File "_bounded_integers.pyx", line 1254, in numpy.random._bounded_integers._rand_int64
+ValueError: low >= high
+100%|██████████| 2/2 [00:13<00:00,  6.54s/it]100%|██████████| 2/2 [00:13<00:00,  6.54s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:05<00:05,  5.84s/it]100%|██████████| 2/2 [00:12<00:00,  6.04s/it]100%|██████████| 2/2 [00:12<00:00,  6.01s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:11<00:11, 11.12s/it]100%|██████████| 2/2 [00:22<00:00, 11.18s/it]100%|██████████| 2/2 [00:22<00:00, 11.17s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:05<00:05,  5.14s/it]100%|██████████| 2/2 [00:09<00:00,  4.82s/it]100%|██████████| 2/2 [00:09<00:00,  4.87s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:10<00:10, 10.45s/it]100%|██████████| 2/2 [00:22<00:00, 11.59s/it]100%|██████████| 2/2 [00:22<00:00, 11.42s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:02<00:02,  2.83s/it]100%|██████████| 2/2 [00:05<00:00,  2.65s/it]100%|██████████| 2/2 [00:05<00:00,  2.67s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:11<00:11, 11.64s/it]100%|██████████| 2/2 [00:23<00:00, 11.93s/it]100%|██████████| 2/2 [00:23<00:00, 11.88s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:03<00:03,  3.23s/it]100%|██████████| 2/2 [00:06<00:00,  3.13s/it]100%|██████████| 2/2 [00:06<00:00,  3.15s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:10<00:10, 10.56s/it]100%|██████████| 2/2 [00:21<00:00, 10.85s/it]100%|██████████| 2/2 [00:21<00:00, 10.80s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:06<00:06,  6.03s/it]100%|██████████| 2/2 [00:11<00:00,  5.98s/it]100%|██████████| 2/2 [00:11<00:00,  5.99s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:02<00:02,  2.79s/it]100%|██████████| 2/2 [00:05<00:00,  2.79s/it]100%|██████████| 2/2 [00:05<00:00,  2.79s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:02<00:02,  2.71s/it]100%|██████████| 2/2 [00:05<00:00,  2.55s/it]100%|██████████| 2/2 [00:05<00:00,  2.57s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:06<00:06,  6.99s/it]100%|██████████| 2/2 [00:13<00:00,  6.71s/it]100%|██████████| 2/2 [00:13<00:00,  6.75s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:04<00:04,  4.68s/it]100%|██████████| 2/2 [00:08<00:00,  4.43s/it]100%|██████████| 2/2 [00:08<00:00,  4.47s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:11<00:11, 11.48s/it]100%|██████████| 2/2 [00:23<00:00, 11.62s/it]100%|██████████| 2/2 [00:23<00:00, 11.60s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:07<00:07,  7.07s/it]100%|██████████| 2/2 [00:13<00:00,  6.70s/it]100%|██████████| 2/2 [00:13<00:00,  6.76s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:07<00:07,  7.10s/it]100%|██████████| 2/2 [00:14<00:00,  7.01s/it]100%|██████████| 2/2 [00:14<00:00,  7.03s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:12<00:12, 12.03s/it]100%|██████████| 2/2 [00:24<00:00, 12.24s/it]100%|██████████| 2/2 [00:24<00:00, 12.20s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:02<00:02,  2.73s/it]100%|██████████| 2/2 [00:05<00:00,  2.67s/it]100%|██████████| 2/2 [00:05<00:00,  2.68s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:06<00:06,  6.01s/it]100%|██████████| 2/2 [00:11<00:00,  5.90s/it]100%|██████████| 2/2 [00:11<00:00,  5.92s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:07<00:07,  7.10s/it]100%|██████████| 2/2 [00:14<00:00,  7.43s/it]100%|██████████| 2/2 [00:14<00:00,  7.38s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:08<00:08,  8.98s/it]100%|██████████| 2/2 [00:17<00:00,  8.66s/it]100%|██████████| 2/2 [00:17<00:00,  8.71s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:07<00:07,  7.60s/it]100%|██████████| 2/2 [00:15<00:00,  7.52s/it]100%|██████████| 2/2 [00:15<00:00,  7.53s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:03<00:03,  3.69s/it]100%|██████████| 2/2 [00:07<00:00,  3.85s/it]100%|██████████| 2/2 [00:07<00:00,  3.82s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:07<00:07,  7.27s/it]100%|██████████| 2/2 [00:14<00:00,  7.24s/it]100%|██████████| 2/2 [00:14<00:00,  7.25s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:09<00:09,  9.82s/it]100%|██████████| 2/2 [00:19<00:00,  9.95s/it]100%|██████████| 2/2 [00:19<00:00,  9.93s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:09<00:09,  9.14s/it]100%|██████████| 2/2 [00:19<00:00,  9.64s/it]100%|██████████| 2/2 [00:19<00:00,  9.57s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:03<00:03,  3.07s/it]100%|██████████| 2/2 [00:06<00:00,  3.11s/it]100%|██████████| 2/2 [00:06<00:00,  3.11s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:07<00:07,  7.96s/it]100%|██████████| 2/2 [00:15<00:00,  7.83s/it]100%|██████████| 2/2 [00:15<00:00,  7.85s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:11<00:11, 11.52s/it]100%|██████████| 2/2 [00:22<00:00, 11.44s/it]100%|██████████| 2/2 [00:22<00:00, 11.45s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:10<00:10, 10.81s/it]100%|██████████| 2/2 [00:21<00:00, 10.53s/it]100%|██████████| 2/2 [00:21<00:00, 10.57s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:09<00:09,  9.33s/it]100%|██████████| 2/2 [00:18<00:00,  9.40s/it]100%|██████████| 2/2 [00:18<00:00,  9.39s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:02<00:02,  2.67s/it]100%|██████████| 2/2 [00:05<00:00,  2.60s/it]100%|██████████| 2/2 [00:05<00:00,  2.61s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:01<00:01,  1.82s/it]100%|██████████| 2/2 [00:03<00:00,  1.78s/it]100%|██████████| 2/2 [00:03<00:00,  1.79s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:06<00:06,  6.88s/it]100%|██████████| 2/2 [00:13<00:00,  6.62s/it]100%|██████████| 2/2 [00:13<00:00,  6.66s/it]
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:04<00:04,  4.91s/it]100%|██████████| 2/2 [00:09<00:00,  4.78s/it]100%|██████████| 2/2 [00:09<00:00,  4.80s/it]
+
+Accuracy for node6 is 0.76400
+Accuracy for node7 is 0.40800
+Accuracy for node8 is 0.68400
+Accuracy for node9 is 0.62400
+Accuracy for node10 is 0.68400
+Accuracy for node11 is 0.41600
+Accuracy for node12 is 0.64400
+Accuracy for node13 is 0.78000
+Accuracy for node14 is 0.60000
+Accuracy for node15 is 0.54000
+Accuracy for node16 is 0.76400
+Accuracy for node17 is 0.64400
+Accuracy for node18 is 0.69600
+Accuracy for node19 is 0.61600
+Accuracy for node20 is 0.50000
+Accuracy for node21 is 0.21200
+Accuracy for node22 is 0.48800
+Accuracy for node23 is 0.44400
+Accuracy for node24 is 0.75600
+Accuracy for node25 is 0.31600
+Accuracy for node26 is 0.40800
+Accuracy for node27 is 0.58000
+Accuracy for node28 is 0.60800
+Accuracy for node29 is 0.50000
+Accuracy for node30 is 0.50400
+Accuracy for node31 is 0.38400
+Accuracy for node32 is 0.56000
+Accuracy for node33 is 0.74000
+Accuracy for node34 is 0.65600
+Accuracy for node35 is 0.65600
+Accuracy for node36 is 0.55200
+Accuracy for node37 is 0.10800
+Accuracy for node38 is 0.50800
+Accuracy for node39 is 0.33600
+Round 0 for mode Gossip completed 
+
+Training and aggregation completed-Moving to calculate Divergence
+Divergence for round-0 completed
+Starting update and aggregation for Centr_Fed
+For mode Centr_Fed, the average cluster loss for cluster-0 is 0.18743
+For mode Centr_Fed, the average cluster loss for cluster-1 is 0.21058
+For mode Centr_Fed, the average cluster loss for cluster-2 is 0.20516
+For mode Centr_Fed, the average cluster loss for cluster-3 is 0.18758
+For mode Centr_Fed, the average cluster loss for cluster-4 is 0.22793
+For mode Centr_Fed, the average cluster loss for cluster-5 is 0.18636
+For mode Centr_Fed, the average cluster loss for cluster-6 is 0.21021
+For mode Centr_Fed, the average cluster loss for cluster-7 is 0.20726
+For mode Centr_Fed, the average global loss for 0.04056
+Traceback (most recent call last):
+  File "Main_Fed.py", line 86, in <module>
+    model_collection, cluster_set, test_acc, test_avgacc, trg_loss, avg_loss, divergence_dict, cluster_set, cluster_graph = D2DFL(dataset, batch_size,
+  File "Main_Fed.py", line 79, in D2DFL
+    model_collection, cluster_set, test_acc, test_avgacc, trg_loss, avg_loss, divergence_dict, cluster_set, cluster_graph = federate(dataset, mode_list, num_rounds,
+  File "/home/ahnaf/Fed_Learn/Divergence/train_round.py", line 98, in federate
+    aggregation_set, aggregation_graph = generate_clusters(mode, num_nodes, num_clusters, overlap = 0.75)
+  File "/home/ahnaf/Fed_Learn/Divergence/d2denvironment.py", line 24, in generate_clusters
+    cluster_sizes = np.random.randint(min_cluster_size, max_cluster_size, size=num_clusters, dtype = int)
+  File "mtrand.pyx", line 746, in numpy.random.mtrand.RandomState.randint
+  File "_bounded_integers.pyx", line 1254, in numpy.random._bounded_integers._rand_int64
+ValueError: low >= high
+/home/ahnaf/Fed_Learn/Divergence/data_utils.py:25: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  return torch.tensor(image), torch.tensor(label)
+Files already downloaded and verified
+Files already downloaded and verified
+The cluster configuration is [[5, 37, 17, 7, 27, 0, 10, 4, 14], [14, 19, 11, 12, 23, 31, 2, 36], [25, 8, 0, 26, 5, 19], [1, 26, 16, 39, 13, 34, 28, 20], [20, 29, 38, 35, 28, 13, 1, 36, 23], [6, 18, 34, 25, 3, 39, 5], [3, 21, 30, 33, 32, 31, 10, 6], [2, 4, 22, 9, 15, 36, 24, 1, 7, 26]]
+Starting update and aggregation for D2D_Clus
+Update for mode D2D_Clus with cifar and 2 epochs in round-0 finished
+For mode D2D_Clus, the average cluster loss for cluster-0 is 0.45088
+For mode D2D_Clus, the average cluster loss for cluster-1 is 0.43690
+For mode D2D_Clus, the average cluster loss for cluster-2 is 0.42849
+For mode D2D_Clus, the average cluster loss for cluster-3 is 0.44332
+For mode D2D_Clus, the average cluster loss for cluster-4 is 0.46634
+For mode D2D_Clus, the average cluster loss for cluster-5 is 0.44311
+For mode D2D_Clus, the average cluster loss for cluster-6 is 0.44961
+For mode D2D_Clus, the average cluster loss for cluster-7 is 0.43251
+For mode D2D_Clus, the average global loss for 0.44390
+Average Accuracy in round-0 for mode D2D_Clus is 0.11940000000000002 
+
+Training and aggregation completed-Moving to calculate Divergence
+Divergence for round-0 completed
+Starting update and aggregation for D2D
+Update for mode D2D with cifar and 2 epochs in round-0 finished
+For mode D2D, the average cluster loss for cluster-0 is 0.45704
+For mode D2D, the average cluster loss for cluster-1 is 0.43701
+For mode D2D, the average cluster loss for cluster-2 is 0.43152
+For mode D2D, the average cluster loss for cluster-3 is 0.44458
+For mode D2D, the average cluster loss for cluster-4 is 0.46763
+For mode D2D, the average cluster loss for cluster-5 is 0.43795
+For mode D2D, the average cluster loss for cluster-6 is 0.44516
+For mode D2D, the average cluster loss for cluster-7 is 0.43371
+For mode D2D, the average global loss for 0.44433
+Average Accuracy in round-0 for mode D2D is 0.11440000000000002 
+
+Training and aggregation completed-Moving to calculate Divergence
+Divergence for round-0 completed
+Starting update and aggregation for HD2D
+Update for mode HD2D with cifar and 2 epochs in round-0 finished
+For mode HD2D, the average cluster loss for cluster-0 is 0.45587
+For mode HD2D, the average cluster loss for cluster-1 is 0.43865
+For mode HD2D, the average cluster loss for cluster-2 is 0.42914
+For mode HD2D, the average cluster loss for cluster-3 is 0.44439
+For mode HD2D, the average cluster loss for cluster-4 is 0.46628
+For mode HD2D, the average cluster loss for cluster-5 is 0.44328
+For mode HD2D, the average cluster loss for cluster-6 is 0.44939
+For mode HD2D, the average cluster loss for cluster-7 is 0.43746
+For mode HD2D, the average global loss for 0.08911
+Average Accuracy in round-0 for mode HD2D is 0.1769 
+
+Training and aggregation completed-Moving to calculate Divergence
+Divergence for round-0 completed
+Starting update and aggregation for Gossip
+Update for mode Gossip with cifar and 2 epochs in round-0 finished
+For mode Gossip, the average cluster loss for cluster-0 is 0.45270
+For mode Gossip, the average cluster loss for cluster-1 is 0.43328
+For mode Gossip, the average cluster loss for cluster-2 is 0.42988
+For mode Gossip, the average cluster loss for cluster-3 is 0.44174
+For mode Gossip, the average cluster loss for cluster-4 is 0.46272
+For mode Gossip, the average cluster loss for cluster-5 is 0.45002
+For mode Gossip, the average cluster loss for cluster-6 is 0.44287
+For mode Gossip, the average cluster loss for cluster-7 is 0.43744
+For mode Gossip, the average global loss for 0.08877
+Average Accuracy in round-0 for mode Gossip is 0.10610000000000006 
+
+Training and aggregation completed-Moving to calculate Divergence
+Divergence for round-0 completed
+Starting update and aggregation for Centr_Fed
+Update for mode Centr_Fed with cifar and 2 epochs in round-0 finished
+For mode Centr_Fed, the average cluster loss for cluster-0 is 0.45341
+For mode Centr_Fed, the average cluster loss for cluster-1 is 0.43079
+For mode Centr_Fed, the average cluster loss for cluster-2 is 0.42146
+For mode Centr_Fed, the average cluster loss for cluster-3 is 0.44984
+For mode Centr_Fed, the average cluster loss for cluster-4 is 0.46933
+For mode Centr_Fed, the average cluster loss for cluster-5 is 0.44178
+For mode Centr_Fed, the average cluster loss for cluster-6 is 0.43810
+For mode Centr_Fed, the average cluster loss for cluster-7 is 0.43059
+For mode Centr_Fed, the average global loss for 0.08838
+Traceback (most recent call last):
+  File "Main_Fed.py", line 86, in <module>
+    model_collection, cluster_set, test_acc, test_avgacc, trg_loss, avg_loss, divergence_dict, cluster_set, cluster_graph = D2DFL(dataset, batch_size,
+  File "Main_Fed.py", line 79, in D2DFL
+    model_collection, cluster_set, test_acc, test_avgacc, trg_loss, avg_loss, divergence_dict, cluster_set, cluster_graph = federate(dataset, mode_list, num_rounds,
+  File "/home/ahnaf/Fed_Learn/Divergence/train_round.py", line 98, in federate
+    aggregation_set, aggregation_graph = generate_clusters(mode, num_nodes, num_clusters, overlap = 0.75)
+  File "/home/ahnaf/Fed_Learn/Divergence/d2denvironment.py", line 24, in generate_clusters
+    cluster_sizes = np.random.randint(min_cluster_size, max_cluster_size, size=num_clusters, dtype = int)
+  File "mtrand.pyx", line 746, in numpy.random.mtrand.RandomState.randint
+  File "_bounded_integers.pyx", line 1254, in numpy.random._bounded_integers._rand_int64
+ValueError: low >= high
+/home/ahnaf/Fed_Learn/Divergence/data_utils.py:25: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  return torch.tensor(image), torch.tensor(label)
+The cluster configuration is [[11, 35, 13, 25, 20, 7, 19], [36, 33, 19, 28], [39, 18, 22, 14, 30, 5], [12, 23, 17, 3, 26, 2, 38, 18, 11, 29, 14], [37, 5, 29, 16, 32, 0, 28, 14], [34, 15, 4, 8, 1, 10, 30, 31], [0, 9, 31, 27, 32, 18, 3, 8, 23], [24, 21, 28, 6, 2, 37, 26]]
+Starting update and aggregation for D2D_Clus
+Update for mode D2D_Clus with mnist and 2 epochs in round-0 finished
+For mode D2D_Clus, the average cluster loss for cluster-0 is 0.19372
+For mode D2D_Clus, the average cluster loss for cluster-1 is 0.19593
+For mode D2D_Clus, the average cluster loss for cluster-2 is 0.17901
+For mode D2D_Clus, the average cluster loss for cluster-3 is 0.19778
+For mode D2D_Clus, the average cluster loss for cluster-4 is 0.18193
+For mode D2D_Clus, the average cluster loss for cluster-5 is 0.18596
+For mode D2D_Clus, the average cluster loss for cluster-6 is 0.19050
+For mode D2D_Clus, the average cluster loss for cluster-7 is 0.20061
+For mode D2D_Clus, the average global loss for 0.19068
+Average Accuracy in round-0 for mode D2D_Clus is 0.8012000000000002 
+
+Training and aggregation completed-Moving to calculate Divergence
+Divergence for round-0 completed
+Starting update and aggregation for D2D
+Update for mode D2D with mnist and 2 epochs in round-0 finished
+For mode D2D, the average cluster loss for cluster-0 is 0.19371
+For mode D2D, the average cluster loss for cluster-1 is 0.19722
+For mode D2D, the average cluster loss for cluster-2 is 0.17814
+For mode D2D, the average cluster loss for cluster-3 is 0.19720
+For mode D2D, the average cluster loss for cluster-4 is 0.18366
+For mode D2D, the average cluster loss for cluster-5 is 0.18430
+For mode D2D, the average cluster loss for cluster-6 is 0.19257
+For mode D2D, the average cluster loss for cluster-7 is 0.19728
+For mode D2D, the average global loss for 0.19051
+Average Accuracy in round-0 for mode D2D is 0.7944000000000001 
+
+Training and aggregation completed-Moving to calculate Divergence
+Divergence for round-0 completed
+Starting update and aggregation for HD2D
+Update for mode HD2D with mnist and 2 epochs in round-0 finished
+For mode HD2D, the average cluster loss for cluster-0 is 0.18967
+For mode HD2D, the average cluster loss for cluster-1 is 0.19334
+For mode HD2D, the average cluster loss for cluster-2 is 0.17709
+For mode HD2D, the average cluster loss for cluster-3 is 0.19605
+For mode HD2D, the average cluster loss for cluster-4 is 0.18302
+For mode HD2D, the average cluster loss for cluster-5 is 0.18497
+For mode HD2D, the average cluster loss for cluster-6 is 0.19072
+For mode HD2D, the average cluster loss for cluster-7 is 0.19740
+For mode HD2D, the average global loss for 0.03781
+Average Accuracy in round-0 for mode HD2D is 0.8712 
+
+Training and aggregation completed-Moving to calculate Divergence
+Divergence for round-0 completed
+Starting update and aggregation for Gossip
+Update for mode Gossip with mnist and 2 epochs in round-0 finished
+For mode Gossip, the average cluster loss for cluster-0 is 0.19119
+For mode Gossip, the average cluster loss for cluster-1 is 0.19417
+For mode Gossip, the average cluster loss for cluster-2 is 0.17841
+For mode Gossip, the average cluster loss for cluster-3 is 0.19722
+For mode Gossip, the average cluster loss for cluster-4 is 0.18271
+For mode Gossip, the average cluster loss for cluster-5 is 0.18485
+For mode Gossip, the average cluster loss for cluster-6 is 0.18897
+For mode Gossip, the average cluster loss for cluster-7 is 0.19854
+For mode Gossip, the average global loss for 0.03790
+Average Accuracy in round-0 for mode Gossip is 0.6007 
+
+Training and aggregation completed-Moving to calculate Divergence
+Divergence for round-0 completed
+Starting update and aggregation for Centr_Fed
+Update for mode Centr_Fed with mnist and 2 epochs in round-0 finished
+For mode Centr_Fed, the average cluster loss for cluster-0 is 0.19328
+For mode Centr_Fed, the average cluster loss for cluster-1 is 0.19637
+For mode Centr_Fed, the average cluster loss for cluster-2 is 0.17991
+For mode Centr_Fed, the average cluster loss for cluster-3 is 0.19837
+For mode Centr_Fed, the average cluster loss for cluster-4 is 0.18444
+For mode Centr_Fed, the average cluster loss for cluster-5 is 0.18710
+For mode Centr_Fed, the average cluster loss for cluster-6 is 0.19174
+For mode Centr_Fed, the average cluster loss for cluster-7 is 0.20059
+For mode Centr_Fed, the average global loss for 0.03829
+Traceback (most recent call last):
+  File "Main_Fed.py", line 86, in <module>
+    model_collection, cluster_set, test_acc, test_avgacc, trg_loss, avg_loss, divergence_dict, cluster_set, cluster_graph = D2DFL(dataset, batch_size,
+  File "Main_Fed.py", line 79, in D2DFL
+    model_collection, cluster_set, test_acc, test_avgacc, trg_loss, avg_loss, divergence_dict, cluster_set, cluster_graph = federate(dataset, mode_list, num_rounds,
+  File "/home/ahnaf/Fed_Learn/Divergence/train_round.py", line 98, in federate
+    aggregation_set, aggregation_graph = generate_clusters(mode, num_nodes, num_clusters, overlap = 0.75)
+  File "/home/ahnaf/Fed_Learn/Divergence/d2denvironment.py", line 24, in generate_clusters
+    cluster_sizes = np.random.randint(min_cluster_size, max_cluster_size, size=num_clusters, dtype = int)
+  File "mtrand.pyx", line 746, in numpy.random.mtrand.RandomState.randint
+  File "_bounded_integers.pyx", line 1254, in numpy.random._bounded_integers._rand_int64
+ValueError: low >= high

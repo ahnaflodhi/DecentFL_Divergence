@@ -17,7 +17,7 @@ def generate_clusters(mode, num_nodes, num_clusters, overlap):
             cluster_sizes = [int(x) for x in cluster_size]
             # Assign nodes to each cluster randomly. Looped over cluster sizes
             for i in range(num_clusters):
-                cluster_set.append(np.random.choice(num_nodes, cluster_sizes[i], replace = False))
+                cluster_set.append(list(np.random.choice(num_nodes, cluster_sizes[i], replace = False)))
         else:
             cluster_sizes = []
             while sum(cluster_sizes) != num_nodes:
@@ -39,7 +39,7 @@ def generate_clusters(mode, num_nodes, num_clusters, overlap):
 #             cluster_set = [[27, 12, 13, 9], [12, 29, 18, 8, 2], [28, 21, 0, 13], [25, 1, 6], [25, 4, 7, 17], [26, 18, 12, 4], [24, 11, 25], [20, 12, 10]]
             
     elif num_clusters == 1:
-        cluster_set[0] = list(range(num_nodes))
+        cluster_set = list(range(num_nodes))
     
     cluster_graph = nx.Graph()
     for i in range(len(cluster_set)):
