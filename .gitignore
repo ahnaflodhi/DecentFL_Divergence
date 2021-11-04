@@ -1,7 +1,7 @@
 data/
 Results/
 nohup.out
-__pycache__
+__pycache__/
 Fig_results/
 *.ipynb
 Tester-niid1.ipynb
