@@ -28,6 +28,7 @@ def federate(dataset, modes, num_rounds, num_epochs, num_nodes, cluster_def, num
     
     
     num_clusters = cluster_def['D2D_Clus']
+    print('Making clusters')
     cluster_set, cluster_graph = generate_clusters(modes[0], num_nodes, num_clusters, overlap = 0.75)
     print(f'The cluster configuration is {cluster_set}')
     # Main Local update and federation round
@@ -85,6 +86,7 @@ def federate(dataset, modes, num_rounds, num_epochs, num_nodes, cluster_def, num
                 #(cluster_set, main_dict, dataset, num_labels, in_channels)
     #                 if mode == 'D2D_Clus':
     #                     model_aggregation(cluster_set, mode_model_dict[mode], mode)
+                print('Entering Aggregation')
                 if mode == 'D2D' or mode == 'HD2D':
                     agg_neighborhood = []
                     for node in range(num_nodes):
@@ -96,7 +98,7 @@ def federate(dataset, modes, num_rounds, num_epochs, num_nodes, cluster_def, num
                         #num_labels, in_channels, dataset, main_dict, mode, server_targets
                         harchy_aggregation(num_labels, in_channels, dataset, mode_model_dict[mode], mode, server_targets)
                 else:
-                    aggregation_set, aggregation_graph = generate_clusters(mode, num_nodes, num_clusters, overlap = 0.75)
+                    aggregation_set, aggregation_graph = generate_clusters(mode, num_nodes, cluster_def[mode], overlap = 0.75)
                     model_aggregation(aggregation_set, mode_model_dict[mode], mode)
                                 
                 # Model testing: Accuracy and Loss calculation
