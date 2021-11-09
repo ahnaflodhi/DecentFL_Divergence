@@ -2,6 +2,7 @@ import numpy as np
 import random
 import copy
 from tqdm import tqdm
+import pickle
 
 import torch
 import torch.nn as nn
@@ -126,7 +127,7 @@ def federate(dataset, modes, num_rounds, num_epochs, num_nodes, cluster_def, num
         if rnd > 0 and rnd % 5 == 0:
             state = [mode_acc_dict, mode_avgacc_dict, mode_trgloss_dict, mode_avgloss_dict, divergence_dict, cluster_set, cluster_graph]
             file_name = dataset.upper() + '_' + str(num_nodes) + '_' + str(num_epochs)
-            file = opne(file_name, 'wb')
+            file = open(file_name, 'wb')
             pickle.dump(state, file)
             file.close()
             
