@@ -2,6 +2,7 @@ from DNN import *
 import heapq
 import numpy as np
 from data_utils import DataSubset
+import copy
 
 import torch
 import torchvision
@@ -20,7 +21,7 @@ class Nodes:
         self.idx = node_idx
         self.batch_size = batch_size
         self.neighborhood = node_neighborhood
-        self.ranked_nhood = self.neighborhood
+        self.ranked_nhood = node_neighborhood
         self.degree = len(self.neighborhood)
         self.weights = network_weights[self.idx]
         
@@ -38,6 +39,7 @@ class Nodes:
         self.testacc = []
         
         # Appending self-idx to record CFL divergence
+        # Divergence Targets
         div_targets = self.neighborhood
         div_targets.append(self.idx)
         self.divergence_dict = {node:[] for node in div_targets}
@@ -52,8 +54,8 @@ class Nodes:
             self.model = Net(num_labels, in_channels, dataset).cuda()
         self.opt = optim.SGD(self.model.parameters(), lr = lr)
 
-    def local_update(self, num_epochs):
-        node_update(self.model, self.opt, self.trainloader, self.trgloss, self.trgacc, num_epochs)
+    def local_update(self, model, num_epochs):
+        node_update(model, self.opt, self.trainloader, self.trgloss, self.trgacc, num_epochs)
         
     def node_test(self):
         test_loss, test_acc = test(self.model, self.testloader)
@@ -77,11 +79,13 @@ class Nodes:
             self.ranked_nhood = self.neighborhood
         else:
             if sort_scope == 'last':
+                # Sort Scope : Number of previous rounds to base ranking metric on
                 prev_performance = {neighbor:divergence[-1] for neighbor, divergence in target.items()}
                 
                 if sort_type == 'min':
 #                     sorted_nhood ={k: v for k, v in sorted(prev_performance.items(), key=lambda item: item[1])}
                     sorted_nhood = heapq.nsmallest(len(self.neighborhood), prev_performance.items(), key = lambda i:i[1])
+    
                 elif sort_type == 'max':
                     sorted_nhood = heapq.nlargest(len(self.neighborhood), prev_performance.items(), key = lambda i:i[1])
                 

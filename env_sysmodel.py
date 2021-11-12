@@ -95,6 +95,12 @@ class system_model:
             temp = cluster_list[:i]
             cluster_list = [item for item in cluster_list if item not in temp]
             self.cluster_ids.append(temp)
+
+    def workermodels(self, base_model):
+        self.model_list = []
+        for i in range(self.num_nodes):
+            self.model_list.append(base_model.cuda())        
+        
            
 class FL_modes(Nodes):
     modes_list = []
@@ -109,7 +115,7 @@ class FL_modes(Nodes):
         self.dist = dist
         self.epochs = num_epochs
         self.rounds = num_rounds
-        self.base_model = base_model.cuda()
+        self.base_model = base_model
         self.cfl_model = copy.deepcopy(self.base_model)
         self.batch_size = batch_size
         if self.name != 'sgd':
@@ -117,17 +123,17 @@ class FL_modes(Nodes):
             self.default_weights(env_Lp)
             self.num_nodes = num_nodes
             self.form_nodeset(num_labels, in_channels, traindata, traindata_dist, testdata, testdata_dist, nhood)
+                               
+            self.cluster_trgloss = {cluster_id:[] for cluster_id in range(self.num_clusters)}
+            self.cluster_trgacc = {cluster_id:[] for cluster_id in range(self.num_clusters)}
+            self.cluster_testloss = {cluster_id:[] for cluster_id in range(self.num_clusters)}
+            self.cluster_testacc = {cluster_id:[] for cluster_id in range(self.num_clusters)}
         
-        # Node records
+        # Mode records
         self.avgtrgloss = []
         self.avgtestloss = []
         self.avgtrgacc = []
         self.avgtestacc = []
-        
-        self.cluster_trgloss = {cluster_id:[] for cluster_id in range(self.num_clusters)}
-        self.cluster_trgacc = {cluster_id:[] for cluster_id in range(self.num_clusters)}
-        self.cluster_testloss = {cluster_id:[] for cluster_id in range(self.num_clusters)}
-        self.cluster_testacc = {cluster_id:[] for cluster_id in range(self.num_clusters)}
         
         FL_modes.modes_list.append(self.name)
         
@@ -151,11 +157,21 @@ class FL_modes(Nodes):
     def default_weights(self, Laplacian):
         self.weightset = Laplacian.toarray()
 
-    def update_round(self):
+#     def update_round(self):
+#         temp_loss = []
+#         temp_acc = []
+#         for node in self.nodeset:
+#             node.local_update(self.epochs)
+#             temp_loss.append(node.trgloss[-1])
+#         self.avgtrgloss.append(sum(temp_loss)/self.num_nodes)
+
+    def update_round(self, env_models):
         temp_loss = []
         temp_acc = []
-        for node in self.nodeset:
-            node.local_update(self.epochs)
+        for i, node in enumerate(self.nodeset):
+            env_models[i].load_state_dict(node.model.state_dict())
+            node.local_update(env_models[i], self.epochs)
+            node.model.load_state_dict(env_models[i].state_dict())
             temp_loss.append(node.trgloss[-1])
         self.avgtrgloss.append(sum(temp_loss)/self.num_nodes)
             
@@ -179,11 +195,18 @@ class FL_modes(Nodes):
             
     def aggregate_round(self):
         for node in self.nodeset:
-            node.aggregate_nhood(self.nodeset)
+            node.aggregate_nhood(self.nodeset)            
+        
 
     def random_aggregate_round(self):
-        for node in self.nodeset:
-            node.aggregate_random(self.nodeset)
+        node_pairs = []
+        node_list = list(range(len(self.nodeset)))
+        while len(node_list) > 1:
+            temp =  random.sample(node_list, 2)
+            node_list = [item for item in node_list if item not in temp]
+            node_pairs.append(temp)
+        for node_pair in node_pairs:
+            aggregate(self.nodeset, node_pair)
             
     def cfl_aggregate_round(self):
         agg_model = aggregate(self.nodeset, list(range(len(self.nodeset))))

@@ -75,6 +75,8 @@ def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_cluste
     # Step 4: Create Environment
     environment = system_model(num_nodes, num_clusters)
     print(f'Number of servers is {environment.num_servers}')
+    # Generate Worker models on GPU to be used by all modes: self.model_list
+    environment.workermodels(base_model)
     
     for mode in modes.keys():
         if mode != 'sgd':
@@ -102,16 +104,14 @@ def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_cluste
         
     ### Step5: Call federate function to start training
     #mode_model_dict, cluster_set, mode_ acc_dict, mode_trgloss_dict, mode_avgloss_dict, divergence_dict    
-    for rnd in range(num_rounds):
-        filename = dataset.upper() + '_' + dist.upper()  + '_' +'n'+ str(num_nodes)  + '_' + 'c' + str(num_clusters)  + '_' +'e' + str(num_epochs) + '_' + 'r' + str(num_rounds)
-        
+    for rnd in range(num_rounds):        
         for mode in modes:
-            print(f'Starting with mode {mode}')
+            print(f'Starting with mode {mode} in round-{rnd}')
             if mode != 'sgd':
                 #1- Local Update
-                print(f'Memory status before update r:{rnd}-mode{mode} Mbs-{torch.cuda.memory_allocated()/1024}')
-                modes[mode].update_round()
-                print(f'Memory status after update r:{rnd}-mode{mode} Mbs-{torch.cuda.memory_allocated()/1024}')
+                print(f'Memory status before update r:{rnd}-mode{mode} Mbs-{torch.cuda.memory_allocated()/(1024 * 1024)}')
+                modes[mode].update_round(environment.model_list)
+                print(f'Memory status after update r:{rnd}-mode{mode} Mbs-{torch.cuda.memory_allocated()/(1024 * 1024)}')
                 
                 #2-Update ranking
                 modes[mode].ranking_round(rnd)
@@ -133,18 +133,18 @@ def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_cluste
                         modes[mode].serverset[-1].aggregate_servers(modes[mode].serverset[:-1], modes[mode].nodeset)
                 elif mode == 'gossip':
                     modes[mode].random_aggregate_round()
-                    print(f'Memory status after aggregation r:{rnd}-mode{mode} Mbs-{torch.cuda.memory_allocated()/1024}')
-                
+                    
                 elif mode == 'cfl':
                     modes[mode].cfl_aggregate_round()
             
             elif mode == 'sgd':
                 node_update(modes[mode].model, sgd_optim, sgd_trainloader, modes[mode].avgtrgloss, modes[mode].avgtrgacc, num_epochs)
                 loss, acc = test(modes[mode].model,sgd_testloader)
-                modes[mode].testloss.append(loss)
-                modes[mode].testacc.append(acc)
+                modes[mode].avgtestloss.append(loss)
+                modes[mode].avgtestacc.append(acc)
         
         if rnd % 5 == 0:
+            filename = dataset.upper() + '_' + dist.upper()  + '_' +'n'+ str(num_nodes)  + '_' + 'c' + str(num_clusters)  + '_' +'e' + str(num_epochs) + '_' + 'r' + str(num_rounds)
             f = open(filename, 'wb')
             pickle.dump(modes, f)
             
