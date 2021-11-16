@@ -6,7 +6,6 @@ from torchvision import datasets, transforms
 from torch.utils.data import Dataset, DataLoader, TensorDataset, IterableDataset
 
 from DNN import *
-from DataSetLoader import load_dataset
 
 class DataSubset(Dataset):
     """
