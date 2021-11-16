@@ -38,7 +38,7 @@ test_batch_size = args.t
 
 modes= {'d2d':None, 'hd2d':None, 'gossip':None, 'cfl':None, 'sgd':None}
 
-def D2DFL(machine, dataset, batch_size, test_batch_size, mode_list, num_nodes, num_clusters, num_rounds, num_epochs, shard_size, overlap, dist):
+def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_clusters, num_rounds, num_epochs, shard_size, overlap, dist):
     # Step 1: Define parameters for the environment, dataset and dataset distribution
     if dataset == 'mnist': # Num labels will depend on the class in question
         location = '../data/'
@@ -165,7 +165,7 @@ def title_gen(dataset, dist, num_nodes, num_clusters, num_epochs, num_rounds):
 
 if __name__ == "__main__":
     #mode_model_dict, cluster_set, mode_acc_dict, mode_trgloss_dict, mode_avgloss_dict, mode_testloss_dict, divergence_dict
-    mode_state = D2DFL(machine, dataset, batch_size, test_batch_size, modes,  nodes, clusters, rounds, epochs, shards, overlap_factor, dist_mode)
+    mode_state = D2DFL(dataset, batch_size, test_batch_size, modes,  nodes, clusters, rounds, epochs, shards, overlap_factor, dist_mode)
 
     
     
