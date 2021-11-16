@@ -23,7 +23,6 @@ parser.add_argument('-r', type = int, default = 30, help='Number of federation r
 parser.add_argument('-o', type = float, default = 0.75, help='Overlap factor in cluser boundaries')
 parser.add_argument('-s', type = int, default = 50, help = ' Shard size for Non-IID distribution')
 parser.add_argument('-m', type = str, default = 'niid', help = 'Data distribution mode (IID, non-IID, 1-class and 2-class non-IID: iid, niid, niid1 or niid2.')
-parser.add_argument('-mac', type = str, default = 'local', help = 'Running on standalone machine or HPC')
 args = parser.parse_args()
 
 dataset = args.d
@@ -34,7 +33,6 @@ epochs = args.e
 rounds = args.r
 overlap_factor = args.o
 shards =args.s
-machine = args.mac
 dist_mode = args.m
 test_batch_size = args.t
 
@@ -43,24 +41,15 @@ modes= {'d2d':None, 'hd2d':None, 'gossip':None, 'cfl':None, 'sgd':None}
 def D2DFL(machine, dataset, batch_size, test_batch_size, mode_list, num_nodes, num_clusters, num_rounds, num_epochs, shard_size, overlap, dist):
     # Step 1: Define parameters for the environment, dataset and dataset distribution
     if dataset == 'mnist': # Num labels will depend on the class in question
-        if machine == 'local':
-            location = '../data/MNIST/raw'
-        else:
-            location = '/datasets/mnist/'
+        location = '../data/'
         num_labels = 10
         in_ch = 1
     elif dataset == 'cifar':
-        if machine == 'local':
-            location = '../data/cifar-10-batches-py/'
-        else:
-            location = '/datasets/cifar/cifar-10-batches-py/'
+        location = '../data/'
         num_labels = 10
         in_ch = 3
     elif dataset == 'fashion':
-        if machine == 'local':
-            location = '../data/FashionMNIST/raw'
-        else:
-            location = '/datasets/FashionMNIST/'
+        location = '../data/'
         num_labels = 10
         in_ch = 1
     

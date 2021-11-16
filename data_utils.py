@@ -41,8 +41,8 @@ def dataset_select(dataset, location):
                                     ])
 
         ## Create Train and Test Dataets
-        traindata = torchvision.datasets.MNIST("../data/", train = True, download = False, transform = transform)
-        testdata = torchvision.datasets.MNIST(root = '../data/', train = False, download = True, transform = transform)
+        traindata = torchvision.datasets.MNIST(root = location, train = True, download = True, transform = transform)
+        testdata = torchvision.datasets.MNIST(root = location, train = False, download = True, transform = transform)
 
 #         traindata = load_dataset(root = location, train = True, transform = transformations)
 #         traindata.data = torch.unsqueeze(traindata.data, 1)
