@@ -116,7 +116,7 @@ class FL_modes(Nodes):
         self.epochs = num_epochs
         self.rounds = num_rounds
         self.base_model = base_model
-        self.cfl_model = copy.deepcopy(self.base_model)
+        self.cfl_model = copy.deepcopy(self.base_model).cuda()
         self.batch_size = batch_size
         if self.name != 'sgd':
             self.num_clusters = num_clusters
@@ -151,29 +151,34 @@ class FL_modes(Nodes):
         self.serverset = []
         for idx in range(num_servers):
             self.serverset.append(Servers(idx, self.base_model))
+            
         #Append 1-additioal server to act as a Global server
         self.serverset.append(Servers(num_servers, self.base_model))
                       
     def default_weights(self, Laplacian):
         self.weightset = Laplacian.toarray()
 
-#     def update_round(self):
-#         temp_loss = []
-#         temp_acc = []
-#         for node in self.nodeset:
-#             node.local_update(self.epochs)
-#             temp_loss.append(node.trgloss[-1])
-#         self.avgtrgloss.append(sum(temp_loss)/self.num_nodes)
-
-    def update_round(self, env_models):
+    def update_round(self):
         temp_loss = []
         temp_acc = []
-        for i, node in enumerate(self.nodeset):
-            env_models[i].load_state_dict(node.model.state_dict())
-            node.local_update(env_models[i], self.epochs)
-            node.model.load_state_dict(env_models[i].state_dict())
+        for node in self.nodeset:
+            node.local_update(self.epochs)
             temp_loss.append(node.trgloss[-1])
         self.avgtrgloss.append(sum(temp_loss)/self.num_nodes)
+
+#     def update_round(self, env_models):
+#         """
+#         Loading a single set of environment models based on cuda.
+#         Loading local dictionary on them to update and copy back to local model.
+#         """       
+#         temp_loss = []
+#         temp_acc = []
+#         for i, node in enumerate(self.nodeset):
+#             env_models[i].load_state_dict(node.model.state_dict())
+#             node.local_update(env_models[i], self.epochs)
+#             node.model.load_state_dict(env_models[i].state_dict())
+#             temp_loss.append(node.trgloss[-1])
+#         self.avgtrgloss.append(sum(temp_loss)/self.num_nodes)
             
     def test_round(self, cluster_set):
         temp_acc = []
@@ -190,15 +195,14 @@ class FL_modes(Nodes):
             
     def ranking_round(self, rnd):
         for node in self.nodeset:
-            node.neighborhood_divergence(self.nodeset, self.cfl_model)
+            node.neighborhood_divergence(self.nodeset, self.cfl_model, normalize = True)
             node.nhood_ranking(rnd)
             
-    def aggregate_round(self):
+    def aggregate_round(self, weightage = 'equal'):
         for node in self.nodeset:
-            node.aggregate_nhood(self.nodeset)            
+            node.aggregate_nhood(self.nodeset, weightage)            
         
-
-    def random_aggregate_round(self):
+    def random_aggregate_round(self, weightage = 'equal'):
         node_pairs = []
         node_list = list(range(len(self.nodeset)))
         while len(node_list) > 1:
@@ -206,11 +210,18 @@ class FL_modes(Nodes):
             node_list = [item for item in node_list if item not in temp]
             node_pairs.append(temp)
         for node_pair in node_pairs:
-            aggregate(self.nodeset, node_pair)
+            scale = {node:1.0 for node in node_pair}
+            aggregate(self.nodeset, node_pair, scale)
             
-    def cfl_aggregate_round(self):
-        agg_model = aggregate(self.nodeset, list(range(len(self.nodeset))))
+    def cfl_aggregate_round(self, weightage = 'equal'):
+        if weightage == 'equal':
+            scale = {i:1.0 for i in range(len(self.nodeset))}
+        elif weightage == 'proportional':
+            scale = {i:self.nodeset[i].divergence_dict[i][-1] for i in range(len(self.nodeset))}
+        
+        agg_model = aggregate(self.nodeset, list(range(len(self.nodeset))), scale)
         self.cfl_model.load_state_dict(agg_model.state_dict())
+                          
         for node in self.nodeset:
             node.model.load_state_dict(self.cfl_model.state_dict())
             

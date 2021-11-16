@@ -23,6 +23,7 @@ parser.add_argument('-r', type = int, default = 30, help='Number of federation r
 parser.add_argument('-o', type = float, default = 0.75, help='Overlap factor in cluser boundaries')
 parser.add_argument('-s', type = int, default = 50, help = ' Shard size for Non-IID distribution')
 parser.add_argument('-m', type = str, default = 'niid', help = 'Data distribution mode (IID, non-IID, 1-class and 2-class non-IID: iid, niid, niid1 or niid2.')
+parser.add_argument('-mac', type = str, default = 'local', help = 'Running on standalone machine or HPC')
 args = parser.parse_args()
 
 dataset = args.d
@@ -33,21 +34,33 @@ epochs = args.e
 rounds = args.r
 overlap_factor = args.o
 shards =args.s
-
+machine = args.mac
 dist_mode = args.m
 test_batch_size = args.t
 
 modes= {'d2d':None, 'hd2d':None, 'gossip':None, 'cfl':None, 'sgd':None}
 
-def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_clusters, num_rounds, num_epochs, shard_size, overlap, dist):
+def D2DFL(machine, dataset, batch_size, test_batch_size, mode_list, num_nodes, num_clusters, num_rounds, num_epochs, shard_size, overlap, dist):
     # Step 1: Define parameters for the environment, dataset and dataset distribution
     if dataset == 'mnist': # Num labels will depend on the class in question
+        if machine == 'local':
+            location = '../data/MNIST/raw'
+        else:
+            location = '/datasets/mnist/'
         num_labels = 10
         in_ch = 1
     elif dataset == 'cifar':
+        if machine == 'local':
+            location = '../data/cifar-10-batches-py/'
+        else:
+            location = '/datasets/cifar/cifar-10-batches-py/'
         num_labels = 10
         in_ch = 3
     elif dataset == 'fashion':
+        if machine == 'local':
+            location = '../data/FashionMNIST/raw'
+        else:
+            location = '/datasets/FashionMNIST/'
         num_labels = 10
         in_ch = 1
     
@@ -55,7 +68,7 @@ def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_cluste
     
     #### Step 2: Import Dataset partitioned into train and testsets
     # Call data_select from data_utils
-    traindata, testdata = dataset_select(dataset)
+    traindata, testdata = dataset_select(dataset, location)
 
     #### Step 3: Divide data among the nodes according to the distribution IID or non-IID
     # Call data_iid/ data_noniid from data_dist
@@ -76,7 +89,7 @@ def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_cluste
     environment = system_model(num_nodes, num_clusters)
     print(f'Number of servers is {environment.num_servers}')
     # Generate Worker models on GPU to be used by all modes: self.model_list
-    environment.workermodels(base_model)
+#     environment.workermodels(base_model)
     
     for mode in modes.keys():
         if mode != 'sgd':
@@ -95,12 +108,12 @@ def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_cluste
                 print(f'The nodes assigned to Global Server are {modes[mode].serverset[-1].node_ids}')
                 
         elif mode == 'sgd':
-            modes[mode] = Servers(0, base_model, records = True)
+            sgd_model = base_model.cuda()
+            modes[mode] = Servers(0, sgd_model, records = True)
             sgd_optim = optim.SGD(modes[mode].model.parameters(), lr = 0.01)
             sgd_trainloader = DataLoader(traindata, batch_size = batch_size)
             sgd_testloader =  DataLoader(testdata)
             
-    print(f'Memory before rounds : {torch.cuda.memory_allocated()/1024}')
         
     ### Step5: Call federate function to start training
     #mode_model_dict, cluster_set, mode_ acc_dict, mode_trgloss_dict, mode_avgloss_dict, divergence_dict    
@@ -109,9 +122,9 @@ def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_cluste
             print(f'Starting with mode {mode} in round-{rnd}')
             if mode != 'sgd':
                 #1- Local Update
-                print(f'Memory status before update r:{rnd}-mode{mode} Mbs-{torch.cuda.memory_allocated()/(1024 * 1024)}')
-                modes[mode].update_round(environment.model_list)
-                print(f'Memory status after update r:{rnd}-mode{mode} Mbs-{torch.cuda.memory_allocated()/(1024 * 1024)}')
+                print(f'Memory status before update r:{rnd}-mode {mode} Mbs-{torch.cuda.memory_allocated()/(1024 * 1024)}')
+                modes[mode].update_round()
+                print(f'Memory status after update r:{rnd}-mode {mode} Mbs-{torch.cuda.memory_allocated()/(1024 * 1024)}')
                 
                 #2-Update ranking
                 modes[mode].ranking_round(rnd)
@@ -122,7 +135,7 @@ def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_cluste
                 #4 Aggregate from neighborhood
                 print(f'Starting Aggregation in round{rnd} for mode {mode}')
                 if mode == 'd2d':
-                    modes[mode].aggregate_round()
+                    modes[mode].aggregate_round(weightage = 'proportional')
                 elif mode == 'hd2d':
                     modes[mode].aggregate_round()
                     if rnd % 5 == 0:
@@ -163,7 +176,7 @@ def title_gen(dataset, dist, num_nodes, num_clusters, num_epochs, num_rounds):
 
 if __name__ == "__main__":
     #mode_model_dict, cluster_set, mode_acc_dict, mode_trgloss_dict, mode_avgloss_dict, mode_testloss_dict, divergence_dict
-    mode_state = D2DFL(dataset, batch_size, test_batch_size, modes,  nodes, clusters, rounds, epochs, shards, overlap_factor, dist_mode)
+    mode_state = D2DFL(machine, dataset, batch_size, test_batch_size, modes,  nodes, clusters, rounds, epochs, shards, overlap_factor, dist_mode)
 
     
     

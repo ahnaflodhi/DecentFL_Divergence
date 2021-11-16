@@ -60,7 +60,7 @@ def data_noniid(dataset, num_users, num_imgs):
 
         
 #     num_imgs = shard_size
-    num_shards = int(len(dataset) / num_imgs) 
+    num_shards = int(len(dataset) / num_imgs)
     idx_shard = [i for i in range(num_shards)]
     dict_users = {i: np.array([], dtype = int) for i in range(num_users)}
     idxs = np.arange(num_shards*num_imgs)

@@ -6,6 +6,7 @@ from torchvision import datasets, transforms
 from torch.utils.data import Dataset, DataLoader, TensorDataset, IterableDataset
 
 from DNN import *
+from DataSetLoader import load_dataset
 
 class DataSubset(Dataset):
     """
@@ -22,9 +23,11 @@ class DataSubset(Dataset):
     
     def __getitem__(self, item):
         image, label = self.dataset[self.indx[item]]
+#         image = self.dataset.data[item]
+#         label = self.dataset.targets[item]
         return torch.tensor(image), torch.tensor(label)
 
-def dataset_select(dataset):
+def dataset_select(dataset, location):
     """ 
     Select from MNIST, CIFAR-10 or FASHION-MNIST
     """
@@ -37,9 +40,15 @@ def dataset_select(dataset):
                                     (0.1307,), (0.3081,)),
                                     ])
 
-        ### Create Train and Test Dataets
-        traindata = torchvision.datasets.MNIST("../data/", train = True, download = True, transform = transform)
+        ## Create Train and Test Dataets
+        traindata = torchvision.datasets.MNIST("../data/", train = True, download = False, transform = transform)
         testdata = torchvision.datasets.MNIST(root = '../data/', train = False, download = True, transform = transform)
+
+#         traindata = load_dataset(root = location, train = True, transform = transformations)
+#         traindata.data = torch.unsqueeze(traindata.data, 1)
+#         testdata = load_dataset(root = location, train = False, transform = transformations)
+#         testdata.data = torch.unsqueeze(testdata.data, 1)
+    
 
     ## CIFAR
     elif dataset == 'cifar':
@@ -49,8 +58,8 @@ def dataset_select(dataset):
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
         
         ###
-        traindata = torchvision.datasets.CIFAR10(root='../data/', train = True, download = True, transform = transform)
-        testdata = torchvision.datasets.CIFAR10(root = '../data/', train = False, download = True, transform = transform)
+        traindata = torchvision.datasets.CIFAR10(root= location, train = True, download = True, transform = transform)
+        testdata = torchvision.datasets.CIFAR10(root = location, train = False, download = True, transform = transform)
     
     elif dataset == 'fashion':
         # Define a transform to normalize the data
@@ -61,8 +70,8 @@ def dataset_select(dataset):
                                     ])
 
         # Download and load the training data
-        traindata = datasets.FashionMNIST(root='../data/', download = True, train = True, transform = transform)
-        testdata = datasets.FashionMNIST(root ='../dat/', download = True, train = False, transform = transform)
+        traindata = datasets.FashionMNIST(root = location, download = True, train = True, transform = transform)
+        testdata = datasets.FashionMNIST(root =location, download = True, train = False, transform = transform)
     
     
     else:

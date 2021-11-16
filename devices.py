@@ -54,8 +54,9 @@ class Nodes:
             self.model = Net(num_labels, in_channels, dataset).cuda()
         self.opt = optim.SGD(self.model.parameters(), lr = lr)
 
-    def local_update(self, model, num_epochs):
-        node_update(model, self.opt, self.trainloader, self.trgloss, self.trgacc, num_epochs)
+    def local_update(self, num_epochs):
+        node_update(self.model, self.opt, self.trainloader, self.trgloss, self.trgacc, num_epochs)
+        print(f'Node {self.idx} : Trg Loss = {self.trgloss}  Test Acc : {self.trgacc}')
         
     def node_test(self):
         test_loss, test_acc = test(self.model, self.testloader)
@@ -92,12 +93,13 @@ class Nodes:
             self.ranked_nhood = [node for node, _ in sorted_nhood]
             
                     
-    def neighborhood_divergence(self, nodeset, cfl_model, mode ='internode', normalize = False):
+    def neighborhood_divergence(self, nodeset, cfl_model, mode ='internode', normalize = True):
                 
         for target_node in self.neighborhood:
             target_model = nodeset[target_node].model
             total_div, conv_div, fc_div = self.internode_divergence(target_model)
-            
+#             print(total_div, conv_div, fc_div)
+#             print(self.divergence_dict)
             self.divergence_dict[target_node].append(total_div)
             self.divergence_conv_dict[target_node].append(conv_div)
             self.divergence_fc_dict[target_node].append(fc_div)
@@ -137,38 +139,61 @@ class Nodes:
         return total_div, conv_div, fc_div
       
     def normalize_divergence(self):
-        temp = self.neighborhood.append(self.idx)
-        for neighbor in temp:
-            norm_factor_total = np.linalg.norm(self.divergence_dict[neighbor])
-            self.divergence_dict[neighbor] = self.divergence_dict[neighbor] / norm_factor
+#         temp = self.neighborhood.append(self.idx)
+        div_list = []
+        fc_div_list = []
+        conv_div_list = []
+
+        for  neighbor in self.neighborhood:
+            div_list += self.divergence_dict[neighbor]
+            conv_div_list += self.divergence_conv_dict[neighbor]
+            fc_div_list += self.divergence_fc_dict[neighbor]
             
-            norm_factor_conv = np.linalg.norm(self.divergence_conv_dict[neighbor])
-            self.divergence_conv_dict[neighbor] = self.divergence_conv_dict[neighbor] / norm_factor_conv
+        norm_factor = np.linalg.norm(div_list)
+        norm_factor_conv = np.linalg.norm(conv_div_list)
+        norm_factor_fc = np.linalg.norm(fc_div_list)
+
+        for neighbor in self.neighborhood:
+            self.divergence_dict[neighbor] = list(self.divergence_dict[neighbor] / norm_factor)
+            self.divergence_conv_dict[neighbor] = list(self.divergence_conv_dict[neighbor] / norm_factor_conv)
+            self.divergence_fc_dict[neighbor] = list(self.divergence_fc_dict[neighbor] / norm_factor_fc)
+    
+    def d2d_scale_update(self, weightage):
+        # Aggregation Weights
+        if weightage == 'equal':
+            # Same weights applied to all aggregation
+            scale = {node:1.0 for node in self.neighborhood}
+        elif weightage == 'proportional':
+            # Divergence-based weights applied to respective models.
+            scale = {node:self.divergence_dict[node][-1] for node in self.neighborhood}
+        return scale
             
-            norm_factor_fc = np.linalg.norm(self.divergence_fc_dict[neighbor])
-            self.divergence_fc_dict[neighbor] = self.divergence_fc_dict[neighbor] / norm_factor_fc
-    
-    
-    def weight_update(self, network_weights):
-        pass
-        
-    def aggregate_nhood(self, nodeset, agg_count = 'default'):
+    def aggregate_nhood(self, nodeset, weightage, agg_count = 'default'):
         #Choosing the #agg_count number of highest ranked nodes for aggregation
         if agg_count == 'default':
             agg_scope = len(self.ranked_nhood)
         else:
             agg_scope = agg_count
+            
         agg_targets = self.ranked_nhood[:agg_scope]
         agg_targets.append(self.idx)
-        agg_model = aggregate(nodeset, agg_targets)
+        
+        scale = self.d2d_scale_update(weightage)            
+        agg_model = aggregate(nodeset, agg_targets, scale)
         self.model.load_state_dict(agg_model.state_dict())
         
-    def aggregate_random(self, nodeset):
+    def aggregate_random(self, nodeset, weightage):
         target_id = self.idx
+
         while target_id == self.idx:
             target_id = random.sample(list(range(len(nodeset))), 1)[0]
         node_list = [self.idx, target_id]
-        agg_model = aggregate(nodeset, node_list)
+        if weightage  == 'equal':
+            scale = {node:1.0 for node in node_list}
+        elif weightage == 'proportional':
+            scale = {node:1.0 for node in node_list}
+                     
+        agg_model = aggregate(nodeset, node_list, scale)
         self.model.load_state_dict(agg_model.state_dict())
         
         
@@ -192,7 +217,8 @@ class Servers:
                 self.node_ids.append(node)
                 
     def aggregate_servers(self, server_set, nodeset):
-        global_model = aggregate(server_set, self.node_ids)
+        scale = np.ones(len(server_set))
+        global_model = aggregate(server_set, self.node_ids, scale)
         self.model.load_state_dict(global_model.state_dict())
         for server in server_set:
             server.model.load_state_dict(self.model.state_dict())
@@ -201,5 +227,10 @@ class Servers:
             node.model.load_state_dict(self.model.state_dict())
         
     def aggregate_clusters(self, nodeset):
-        server_agg_model = aggregate(nodeset, self.node_ids)
+#         print(self.node_ids)
+        scale = {}
+        for i in self.node_ids:
+            scale[i] = nodeset[i].divergence_dict[i][-1]
+#         print(scale)
+        server_agg_model = aggregate(nodeset, self.node_ids, scale)
         self.model.load_state_dict(server_agg_model.state_dict())

@@ -26,6 +26,17 @@ class Net(nn.Module):
         elif dataset == 'cifar':
             self.fc1 = nn.Linear(2880, 1440)
             self.fc2 = nn.Linear(1440, num_classes)
+#         super(Net, self).__init__()
+#         self.conv1 = nn.Conv2d(in_ch, 32, 3, 1)
+#         self.conv2 = nn.Conv2d(32, 64, 3, 1)
+#         self.dropout1 = nn.Dropout(0.2)
+#         self.dropout2 = nn.Dropout(0.1)
+#         if dataset == 'mnist' or dataset == 'fashion':
+#             self.fc1 = nn.Linear(9216, 128)
+#             self.fc2 = nn.Linear(128, num_classes)
+#         elif dataset == 'cifar':
+#             self.fc1 = nn.Linear(12544, 128)
+#             self.fc2 = nn.Linear(128, num_classes)
             
     def forward(self, x):
         x = self.conv1(x)
@@ -56,8 +67,8 @@ def node_update(client_model, optimizer, train_loader, record_loss, record_acc, 
 #         epoch_loss = 0.0
         batch_loss = []
         correct_state = []
-        correct = 0
         for batch_idx, (data, targets) in enumerate(train_loader):
+            correct = 0
             data = data.float()
             data, targets = data.cuda(), targets.cuda()
             optimizer.zero_grad()
@@ -67,25 +78,23 @@ def node_update(client_model, optimizer, train_loader, record_loss, record_acc, 
             loss.backward()
             optimizer.step()
             correct += (output == targets).float().sum() / output.shape[0]
-
             batch_loss.append(loss.item())
-            correct_state.append(correct)
+            correct_state.append(correct.item())
 #             if batch_idx % 100 == 0:    # print every 100 mini-batches
 #                 print('[%d, %5d] loss-acc: %.3f - %.3f' %(epoch+1, batch_idx+1, sum(batch_loss)/len(batch_loss), sum(correct_state)/len(correct_state)))
-            del data, targets
-            del loss, output
             
         epoch_loss = sum(batch_loss) / len(batch_loss)
         epoch_acc = sum(correct_state) / len(correct_state)
-        record_loss.append(epoch_loss)
-        record_acc.append(epoch_acc)
+        record_loss.append(round(epoch_loss, 3))
+        record_acc.append(round(epoch_acc,3))
+        del data, targets
+        del loss, output
 
-
-def aggregate(model_list, node_list):
+def aggregate(model_list, node_list, scale):
     agg_model = copy.deepcopy(model_list[0].model)
-    ref_dict = agg_model.state_dict()
+    ref_dict = copy.deepcopy(agg_model.state_dict())
     for k in ref_dict.keys():
-        ref_dict[k] = torch.stack([model_list[node].model.state_dict()[k].float() for node in node_list], 0).mean(0)
+        ref_dict[k] = torch.stack([torch.mul(model_list[node].model.state_dict()[k].float(), scale[node]) for node in node_list], 0).mean(0)
     agg_model.load_state_dict(ref_dict)
     
     return agg_model
@@ -161,31 +170,6 @@ def calculate_divergence(modes, main_model_dict, cluster_set, num_nodes, diverge
                 target_weight = extract_weights(target_model)
                 for layer in ref_weight.keys():                          
                     divergence_results[mode][target_node][layer].append(torch.linalg.norm(ref_weight[layer] - target_weight[layer]))
-   
-#     centr_fed_ref = np.random.randint(0, num_nodes)
-#     for mode in modes:
-#         basemodel_keys = main_model_dict[mode][0].state_dict().keys()
-#         break
-#     diverg_recorder = {key:[] for key in basemodel_keys}
-#     # Dictionary to be accessed by mode-key-divergence (at the end of each round)
-#     sgdmode_divergence_results = {mode:diverg_recorder for mode in modes if mode != 'SGD'}
-#     # Do not inlude a list of nodes for SGD model
-#     sample_nodes = {mode:[] for mode in modes if mode != 'SGD'}
-#     for mode, _ in sample_nodes.items():
-#         for cluster_id in range(len(cluster_set)):
-#             sample_nodes[mode].append(random.choice(cluster_set[cluster_id]))
-    
-#     # Intra-cluster same-mode divergence
-#     # i and j are node indices.
-#     ref_model = main_model_dict['SGD']
-#     ref_weight = extract_weights(ref_model)
-#     for mode in modes:
-#         if mode != 'SGD':
-#             for target_id in sample_nodes[mode]:
-#                 target_model = main_model_dict[mode][target_id].cuda()
-#                 target_weight = extract_weights(target_model)
-#                 for key in ref_weight.keys():                          
-#                     sgdmode_divergence_results[mode][key].append(torch.linalg.norm(ref_weight[key] - target_weight[key]))
     return  divergence_results
 
 
