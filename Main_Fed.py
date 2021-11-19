@@ -11,6 +11,7 @@ from data_dist import * # (Returns the dictionary of nodes/data partitions for b
 from DNN import * # (Returns Network, client update, aggregate)
 from env_sysmodel import system_model, FL_modes
 from devices import Nodes, Servers
+from plots import plot_testacc
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-b', type = int, default = 8, help = 'Batch size for the dataset')
@@ -124,7 +125,7 @@ def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_cluste
                 #4 Aggregate from neighborhood
                 print(f'Starting Aggregation in round{rnd} for mode {mode}')
                 if mode == 'd2d':
-                    modes[mode].aggregate_round(weightage = 'proportional')
+                    modes[mode].aggregate_round()
                 elif mode == 'hd2d':
                     modes[mode].aggregate_round()
                     if rnd % 5 == 0:
@@ -149,10 +150,13 @@ def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_cluste
             filename = dataset.upper() + '_' + dist.upper()  + '_' +'n'+ str(num_nodes)  + '_' + 'c' + str(num_clusters)  + '_' +'e' + str(num_epochs) + '_' + 'r' + str(num_rounds)
             f = open(filename, 'wb')
             pickle.dump(modes, f)
-            
+    folder = '../Results'        
     file_name = title_gen(dataset, dist, num_nodes, num_clusters, num_epochs, num_rounds)
-    f = open(file_name, 'wb')
+    file_path = os.path.join(folder, file_name)
+    f = open(file_path, 'wb')
     pickle.dump(modes, f)
+    
+    plot_testacc(folder, file_name)
                 
         
                 

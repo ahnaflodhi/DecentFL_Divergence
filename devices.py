@@ -158,7 +158,7 @@ class Nodes:
             self.divergence_conv_dict[neighbor] = list(self.divergence_conv_dict[neighbor] / norm_factor_conv)
             self.divergence_fc_dict[neighbor] = list(self.divergence_fc_dict[neighbor] / norm_factor_fc)
     
-    def d2d_scale_update(self, weightage):
+    def scale_update(self, weightage):
         # Aggregation Weights
         if weightage == 'equal':
             # Same weights applied to all aggregation
@@ -178,7 +178,7 @@ class Nodes:
         agg_targets = self.ranked_nhood[:agg_scope]
         agg_targets.append(self.idx)
         
-        scale = self.d2d_scale_update(weightage)            
+        scale = self.scale_update(weightage)            
         agg_model = aggregate(nodeset, agg_targets, scale)
         self.model.load_state_dict(agg_model.state_dict())
         
