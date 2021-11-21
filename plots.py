@@ -15,6 +15,7 @@ def plot_testacc(folder,filename):
 	filepath = os.path.join(folder, filename) 
 	with open(filepath, 'rb') as fobject:
 		state = pickle.load(fobject)
+       
 
 	plt.figure(figsize = (15, 10))
 	modes = [mode for mode in state.keys()]

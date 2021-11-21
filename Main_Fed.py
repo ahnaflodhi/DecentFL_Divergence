@@ -148,13 +148,14 @@ def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_cluste
         
         if rnd % 5 == 0:
             filename = dataset.upper() + '_' + dist.upper()  + '_' +'n'+ str(num_nodes)  + '_' + 'c' + str(num_clusters)  + '_' +'e' + str(num_epochs) + '_' + 'r' + str(num_rounds)
-            f = open(filename, 'wb')
-            pickle.dump(modes, f)
+            with open(filename, 'wb') as f:
+                pickle.dump(modes, f)
+            
     folder = '../Results'        
     file_name = title_gen(dataset, dist, num_nodes, num_clusters, num_epochs, num_rounds)
     file_path = os.path.join(folder, file_name)
-    f = open(file_path, 'wb')
-    pickle.dump(modes, f)
+    with open(file_path, 'wb') as ffinal:
+        pickle.dump(modes, ffinal)
     
     plot_testacc(folder, file_name)
                 

@@ -217,7 +217,7 @@ class Servers:
                 self.node_ids.append(node)
                 
     def aggregate_servers(self, server_set, nodeset):
-        scale = np.ones(len(server_set))
+        scale = {server_id:1.0 for server_id in range(len(server_set)) }
         global_model = aggregate(server_set, self.node_ids, scale)
         self.model.load_state_dict(global_model.state_dict())
         for server in server_set:
@@ -227,10 +227,6 @@ class Servers:
             node.model.load_state_dict(self.model.state_dict())
         
     def aggregate_clusters(self, nodeset):
-#         print(self.node_ids)
-        scale = {}
-        for i in self.node_ids:
-            scale[i] = nodeset[i].divergence_dict[i][-1]
-#         print(scale)
+        scale = {node:1.0 for node in self.node_ids}
         server_agg_model = aggregate(nodeset, self.node_ids, scale)
         self.model.load_state_dict(server_agg_model.state_dict())
