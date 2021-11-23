@@ -57,14 +57,13 @@ class Nodes:
     def local_update(self, num_epochs):
         node_update(self.model, self.opt, self.trainloader, self.trgloss, self.trgacc, num_epochs)
         print(f'Node {self.idx} : Trg Loss = {self.trgloss}  Test Acc : {self.trgacc}')
-        
+                
     def node_test(self):
         test_loss, test_acc = test(self.model, self.testloader)
         self.testloss.append(test_loss)
         self.testacc.append(test_acc)
 #         print(f'Accuracy for node{self.idx} is {test_acc:0.5f}')
-        
-        
+                    
     def nhood_ranking(self, rnd, sort_crit = 'total', sort_scope= 'last', sort_type = 'min'):
         if sort_crit == 'total':
             self.apply_ranking(self.divergence_dict, rnd, sort_scope, sort_type)
@@ -201,7 +200,7 @@ class Servers:
     idx = 0
     def __init__(self, idx, model, records = False):
         self.idx = Servers.idx
-        self.model = copy.deepcopy(model)
+        self.model = copy.deepcopy(model).cuda()
         Servers.idx += 1
         if records == True:
             self.avgtrgloss = []

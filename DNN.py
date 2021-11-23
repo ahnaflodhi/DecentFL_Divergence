@@ -6,7 +6,6 @@ import random
 import copy
 import heapq
 
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -52,6 +51,16 @@ class Net(nn.Module):
         x = self.fc2(x)
         output = F.log_softmax(x, dim=1)
         return output
+    
+    @staticmethod
+    def add_noise(model, mean = [0.0], std = [0.1]):
+        norm_dist = torch.distributions.Normal(loc = torch.tensor(mean), scale = torch.tensor(std))
+        for layer in model.state_dict():
+            if 'weight' in layer:
+                x = model.state_dict()[layer]
+                t = norm_dist.sample((x.view(-1).size())).reshape(x.size()).cuda()
+                model.state_dict()[layer].add_(t)
+        return model
    
     def num_flat_features(self, x):
         size = x.size()[1:]  # all dimensions except the batch dimension
@@ -90,13 +99,20 @@ def node_update(client_model, optimizer, train_loader, record_loss, record_acc, 
         del data, targets
         del loss, output
 
-def aggregate(model_list, node_list, scale):
+def aggregate(model_list, node_list, scale, noise = True):
     agg_model = copy.deepcopy(model_list[0].model)
     ref_dict = copy.deepcopy(agg_model.state_dict())
-    for k in ref_dict.keys():
-        ref_dict[k] = torch.stack([torch.mul(model_list[node].model.state_dict()[k].float(), scale[node]) for node in node_list], 0).mean(0)
+    models = [copy.deepcopy(model_list[node].model) for node in node_list]
+    if noise == True:
+        models = [Net.add_noise(model) for model in models]
+        for k in ref_dict.keys():
+            ref_dict[k] = torch.stack([torch.mul(models[i].state_dict()[k].float(), scale[node]) for i, node in enumerate(node_list)], 0).mean(0)
+    else:
+        for k in ref_dict.keys():
+            ref_dict[k] = torch.stack([torch.mul(model_list[node].model.state_dict()[k].float(), scale[node]) for node in node_list], 0).mean(0)
     agg_model.load_state_dict(ref_dict)
     
+    del models
     return agg_model
 
 def model_checker(model1, model2):
@@ -130,7 +146,7 @@ def test(model, test_loader):
 
     return test_loss, acc
 
-def extract_weights(model):
+def extract_weights(model, add_noise = True):
     weights = {}
     for key in model.state_dict():
         if 'weight' not in key:
