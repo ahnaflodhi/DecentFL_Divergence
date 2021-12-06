@@ -14,28 +14,28 @@ import torch.optim as optim
 
 class Net(nn.Module):
     def __init__(self, num_classes, in_ch, dataset):
-        super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(in_ch, 10, 5, 1)
-        self.conv2 = nn.Conv2d(10, 20, 5, 1)
-        self.dropout1 = nn.Dropout(0.1)
-        self.dropout2 = nn.Dropout(0.2)
-        if dataset == 'mnist' or dataset == 'fashion':
-            self.fc1 = nn.Linear(2000, 1000)
-            self.fc2 = nn.Linear(1000, num_classes)
-        elif dataset == 'cifar':
-            self.fc1 = nn.Linear(2880, 1440)
-            self.fc2 = nn.Linear(1440, num_classes)
 #         super(Net, self).__init__()
-#         self.conv1 = nn.Conv2d(in_ch, 32, 3, 1)
-#         self.conv2 = nn.Conv2d(32, 64, 3, 1)
-#         self.dropout1 = nn.Dropout(0.2)
-#         self.dropout2 = nn.Dropout(0.1)
+#         self.conv1 = nn.Conv2d(in_ch, 10, 5, 1)
+#         self.conv2 = nn.Conv2d(10, 20, 5, 1)
+#         self.dropout1 = nn.Dropout(0.1)
+#         self.dropout2 = nn.Dropout(0.2)
 #         if dataset == 'mnist' or dataset == 'fashion':
-#             self.fc1 = nn.Linear(9216, 128)
-#             self.fc2 = nn.Linear(128, num_classes)
+#             self.fc1 = nn.Linear(2000, 1000)
+#             self.fc2 = nn.Linear(1000, num_classes)
 #         elif dataset == 'cifar':
-#             self.fc1 = nn.Linear(12544, 128)
-#             self.fc2 = nn.Linear(128, num_classes)
+#             self.fc1 = nn.Linear(2880, 1440)
+#             self.fc2 = nn.Linear(1440, num_classes)
+        super(Net, self).__init__()
+        self.conv1 = nn.Conv2d(in_ch, 32, 3, 1)
+        self.conv2 = nn.Conv2d(32, 64, 3, 1)
+        self.dropout1 = nn.Dropout(0.2)
+        self.dropout2 = nn.Dropout(0.1)
+        if dataset == 'mnist' or dataset == 'fashion':
+            self.fc1 = nn.Linear(9216, 128)
+            self.fc2 = nn.Linear(128, num_classes)
+        elif dataset == 'cifar':
+            self.fc1 = nn.Linear(12544, 128)
+            self.fc2 = nn.Linear(128, num_classes)
             
     def forward(self, x):
         x = self.conv1(x)
@@ -99,7 +99,7 @@ def node_update(client_model, optimizer, train_loader, record_loss, record_acc, 
         del data, targets
         del loss, output
 
-def aggregate(model_list, node_list, scale, noise = True):
+def aggregate(model_list, node_list, scale, noise = False):
     agg_model = copy.deepcopy(model_list[0].model)
     ref_dict = copy.deepcopy(agg_model.state_dict())
     models = [copy.deepcopy(model_list[node].model) for node in node_list]
@@ -109,7 +109,8 @@ def aggregate(model_list, node_list, scale, noise = True):
             ref_dict[k] = torch.stack([torch.mul(models[i].state_dict()[k].float(), scale[node]) for i, node in enumerate(node_list)], 0).mean(0)
     else:
         for k in ref_dict.keys():
-            ref_dict[k] = torch.stack([torch.mul(model_list[node].model.state_dict()[k].float(), scale[node]) for node in node_list], 0).mean(0)
+#             ref_dict[k] = torch.stack([torch.mul(model_list[node].model.state_dict()[k].float(), scale[node]) for node in node_list], 0).mean(0)
+            ref_dict[k] = torch.stack([model_list[node].model.state_dict()[k].float() for node in node_list], 0).mean(0)
     agg_model.load_state_dict(ref_dict)
     
     del models

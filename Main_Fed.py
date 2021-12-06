@@ -2,7 +2,7 @@ import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID";
 
 #The GPU id to use, usually either "0" or "1";
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 import argparse
 import pickle
 import time
@@ -37,7 +37,7 @@ shards =args.s
 dist_mode = args.m
 test_batch_size = args.t
 
-modes= {'d2d':None, 'hd2d':None, 'gossip':None, 'cfl':None, 'sgd':None}
+modes= {'d2d':None, 'hd2d':None, 'hfl': None, 'gossip':None, 'cfl':None, 'sgd':None}
 
 def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_clusters, num_rounds, num_epochs, shard_size, overlap, dist):
     # Step 1: Define parameters for the environment, dataset and dataset distribution
@@ -90,12 +90,19 @@ def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_cluste
                 # Create Hierarchical Servers
                 modes[mode].form_serverset(environment.num_servers)
                 # Assign Nodes
+                node_list = list(range(num_nodes))
                 for i in range(environment.num_servers):
-                    modes[mode].serverset[i].harchy_servers(environment.cluster_ids[i], environment.cluster_set)
+                    print(node_list)
+                    modes[mode].serverset[i].harchy_servers(environment.cluster_ids[i], environment.cluster_set, node_list)
+                    node_list = [item for item in node_list if item not in modes[mode].serverset[i].node_ids]
+                                 
                     print(f'The nodes assigned to Server-{i} are {modes[mode].serverset[i].node_ids}')
                 # Assign server list to Master Server
                 modes[mode].serverset[-1].node_ids = list(range(environment.num_servers))
                 print(f'The nodes assigned to Global Server are {modes[mode].serverset[-1].node_ids}')
+            
+            if mode == 'hfl':
+                modes[mode] =copy.deepcopy(modes['hd2d'])
                 
         elif mode == 'sgd':
             sgd_model = base_model.cuda()
@@ -126,8 +133,11 @@ def D2DFL(dataset, batch_size, test_batch_size, mode_list, num_nodes, num_cluste
                 print(f'Starting Aggregation in round{rnd} for mode {mode}')
                 if mode == 'd2d':
                     modes[mode].aggregate_round()
-                elif mode == 'hd2d':
-                    modes[mode].aggregate_round()
+                    
+                elif mode == 'hd2d' or mode == 'hfl':
+                    if mode != 'hfl':
+                        modes[mode].aggregate_round()
+                        
                     if rnd % 5 == 0:
                         for i in range(environment.num_servers):
                             modes[mode].serverset[i].aggregate_clusters(modes[mode].nodeset)
@@ -169,7 +179,7 @@ def title_gen(dataset, dist, num_nodes, num_clusters, num_epochs, num_rounds):
                 
 
 if __name__ == "__main__":
-    #mode_model_dict, cluster_set, mode_acc_dict, mode_trgloss_dict, mode_avgloss_dict, mode_testloss_dict, divergence_dict
+#     dataset, batch_size, test_batch_size, mode_list, num_nodes, num_clusters, num_rounds, num_epochs, shard_size, overlap, dist
     mode_state = D2DFL(dataset, batch_size, test_batch_size, modes,  nodes, clusters, rounds, epochs, shards, overlap_factor, dist_mode)
 
     

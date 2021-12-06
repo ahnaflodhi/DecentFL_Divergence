@@ -36,7 +36,7 @@ class system_model:
     def generate_clusters(self):
         cluster_set = []
         cluster_sizes = []
-        # Ensure nodes across clusters are equal to the total nodes
+        # Ensure total nodes across clusters are equal to the total nodes
         while sum(cluster_sizes) != self.num_nodes:
             cluster_sizes = list(np.random.randint(self.min_size, self.max_size, size=self.num_clusters, dtype = int))
         node_list = list(range(self.num_nodes))
@@ -44,9 +44,14 @@ class system_model:
         for size in cluster_sizes:
             temp = random.sample(node_list, size)
             node_list = [item for item in node_list if item not in temp]
+            add_factor = np.random.randint(2, 6)
+            add = random.sample(list(range(self.num_nodes)),  add_factor)
+            for add_node in add:
+                if add_node not in temp:
+                    temp.append(add_node)
             cluster_set.append(temp)
         self.cluster_set = cluster_set
-#         print(f'The generated cluster set is {self.cluster_set}')
+        print(f'The generated cluster set is {self.cluster_set}')
         
     def create_graph(self):
         cluster_graph = nx.Graph()

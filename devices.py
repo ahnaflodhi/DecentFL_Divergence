@@ -198,8 +198,8 @@ class Nodes:
         
 class Servers:
     idx = 0
-    def __init__(self, idx, model, records = False):
-        self.idx = Servers.idx
+    def __init__(self, server_id, model, records = False):
+        self.idx = server_id
         self.model = copy.deepcopy(model).cuda()
         Servers.idx += 1
         if records == True:
@@ -208,12 +208,15 @@ class Servers:
             self.avgtestloss = []
             self.avgtestacc =[]
         
-    def harchy_servers(self, cluster_ids, cluster_set):
+    def harchy_servers(self, cluster_ids, cluster_set, node_list):
         self.clusters = cluster_ids
         self.node_ids = []
+        # This works for clustered graphs. Not where graphs are reachable and clusters are overlapping
         for cluster_id in self.clusters:
             for node in cluster_set[cluster_id]:
-                self.node_ids.append(node)
+                if node not in self.node_ids and node in node_list:
+                    self.node_ids.append(node)                 
+
                 
     def aggregate_servers(self, server_set, nodeset):
         scale = {server_id:1.0 for server_id in range(len(server_set)) }
