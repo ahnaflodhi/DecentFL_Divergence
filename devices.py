@@ -16,7 +16,7 @@ class Nodes:
     """
     
     def __init__(self, node_idx, base_model, num_labels, in_channels, traindata, trg_dist, testdata, test_dist, dataset, batch_size, node_neighborhood,
-                 network_weights, lr = 0.01, wt_init = True):
+                 network_weights, lr = 0.01, wt_init = True, role = 'node'):
         #Node properties
         self.idx = node_idx
         self.batch_size = batch_size
@@ -24,6 +24,7 @@ class Nodes:
         self.ranked_nhood = node_neighborhood
         self.degree = len(self.neighborhood)
         self.weights = network_weights[self.idx]
+        self.role = role
         
         # Dataset and data dist related
         self.trainset = trg_dist[self.idx]
@@ -41,7 +42,6 @@ class Nodes:
         # Appending self-idx to record CFL divergence
         # Divergence Targets
         div_targets = self.neighborhood
-        div_targets.append(self.idx)
         self.divergence_dict = {node:[] for node in div_targets}
         self.divergence_conv_dict = {node:[] for node in div_targets}
         self.divergence_fc_dict = {node:[] for node in div_targets}        
@@ -64,36 +64,7 @@ class Nodes:
         self.testacc.append(test_acc)
 #         print(f'Accuracy for node{self.idx} is {test_acc:0.5f}')
                     
-    def nhood_ranking(self, rnd, sort_crit = 'total', sort_scope= 'last', sort_type = 'min'):
-        if sort_crit == 'total':
-            self.apply_ranking(self.divergence_dict, rnd, sort_scope, sort_type)
-        elif sort_crit == 'conv':
-            self.apply_ranking(self.divergence_conv_dict, rnd, sort_scope, sort_type)
-        elif sort_crit == 'fc':
-            self.apply_ranking(self.divergence_fc_dict, rnd, sort_scope, sort_type)
-            
-         
-    def apply_ranking(self, target, rnd, sort_scope, sort_type):
-        # Target is the metric (divergence, KL, WS) to apply ranking on.
-        if rnd == 0:
-            self.ranked_nhood = self.neighborhood
-        else:
-            if sort_scope == 'last':
-                # Sort Scope : Number of previous rounds to base ranking metric on
-                prev_performance = {neighbor:divergence[-1] for neighbor, divergence in target.items()}
-                
-                if sort_type == 'min':
-#                     sorted_nhood ={k: v for k, v in sorted(prev_performance.items(), key=lambda item: item[1])}
-                    sorted_nhood = heapq.nsmallest(len(self.neighborhood), prev_performance.items(), key = lambda i:i[1])
-    
-                elif sort_type == 'max':
-                    sorted_nhood = heapq.nlargest(len(self.neighborhood), prev_performance.items(), key = lambda i:i[1])
-                
-            self.ranked_nhood = [node for node, _ in sorted_nhood]
-            
-                    
-    def neighborhood_divergence(self, nodeset, cfl_model, mode ='internode', normalize = True):
-                
+    def neighborhood_divergence(self, nodeset, cfl_model, mode ='internode', normalize = True):     
         for target_node in self.neighborhood:
             target_model = nodeset[target_node].model
             total_div, conv_div, fc_div = self.internode_divergence(target_model)
@@ -101,16 +72,10 @@ class Nodes:
 #             print(self.divergence_dict)
             self.divergence_dict[target_node].append(total_div)
             self.divergence_conv_dict[target_node].append(conv_div)
-            self.divergence_fc_dict[target_node].append(fc_div)
-        
-        total_div_cfl, conv_div_cfl, fc_div_cfl = self.internode_divergence(cfl_model, mode = 'cfl_div')
-        self.divergence_dict[self.idx].append(total_div_cfl)
-        self.divergence_conv_dict[self.idx].append(conv_div_cfl)
-        self.divergence_fc_dict[self.idx].append(fc_div_cfl)            
+            self.divergence_fc_dict[target_node].append(fc_div)           
             
         if normalize == True:
             self.normalize_divergence()
-
     
     def internode_divergence(self, target_model, mode = 'internode'):
         total_div = 0
@@ -138,24 +103,39 @@ class Nodes:
         return total_div, conv_div, fc_div
       
     def normalize_divergence(self):
-#         temp = self.neighborhood.append(self.idx)
-        div_list = []
-        fc_div_list = []
-        conv_div_list = []
-
-        for  neighbor in self.neighborhood:
-            div_list += self.divergence_dict[neighbor]
-            conv_div_list += self.divergence_conv_dict[neighbor]
-            fc_div_list += self.divergence_fc_dict[neighbor]
+        total_div_factor = sum([self.divergence_dict[nhbr][-1] for nhbr in self.divergence_dict.keys()])
+        conv_div_factor = sum([self.divergence_conv_dict[nhbr][-1] for nhbr in self.divergence_conv_dict.keys()])
+        fc_div_factor = sum([self.divergence_fc_dict[nhbr][-1] for nhbr in self.divergence_fc_dict.keys()])
+        
+        for nhbr in self.divergence_dict.keys():
+            self.divergence_dict[nhbr][-1] = self.divergence_dict[nhbr][-1] / total_div_factor
+            self.divergence_conv_dict[nhbr][-1] = self.divergence_conv_dict[nhbr][-1] / conv_div_factor
+            self.divergence_fc_dict[nhbr][-1] = self.divergence_fc_dict[nhbr][-1] / fc_div_factor
+    
+    def nhood_ranking(self, rnd, sort_crit = 'total', sort_scope= 1 , sort_type = 'min'):
+        if sort_crit == 'total':
+            self.apply_ranking(self.divergence_dict, rnd, sort_scope, sort_type)
+        elif sort_crit == 'conv':
+            self.apply_ranking(self.divergence_conv_dict, rnd, sort_scope, sort_type)
+        elif sort_crit == 'fc':
+            self.apply_ranking(self.divergence_fc_dict, rnd, sort_scope, sort_type)
             
-        norm_factor = np.linalg.norm(div_list)
-        norm_factor_conv = np.linalg.norm(conv_div_list)
-        norm_factor_fc = np.linalg.norm(fc_div_list)
+         
+    def apply_ranking(self, target, rnd, sort_scope, sort_type):
+        # Target is the metric (divergence, KL, WS) to apply ranking on.
+        if rnd == 0:
+            self.ranked_nhood = self.neighborhood
+        else:
+            prev_performace = {neighbor:sum(divergence[-sort_scope:]) for neighbor, divergence in target.items()}
+            
+            if sort_type == 'min':
+#                     sorted_nhood ={k: v for k, v in sorted(prev_performance.items(), key=lambda item: item[1])}
+                sorted_nhood = heapq.nsmallest(len(self.neighborhood), prev_performance.items(), key = lambda i:i[1])
 
-        for neighbor in self.neighborhood:
-            self.divergence_dict[neighbor] = list(self.divergence_dict[neighbor] / norm_factor)
-            self.divergence_conv_dict[neighbor] = list(self.divergence_conv_dict[neighbor] / norm_factor_conv)
-            self.divergence_fc_dict[neighbor] = list(self.divergence_fc_dict[neighbor] / norm_factor_fc)
+            elif sort_type == 'max':
+                sorted_nhood = heapq.nlargest(len(self.neighborhood), prev_performance.items(), key = lambda i:i[1])
+                
+            self.ranked_nhood = [node for node, _ in sorted_nhood]
     
     def scale_update(self, weightage):
         # Aggregation Weights
@@ -167,15 +147,28 @@ class Nodes:
             scale = {node:self.divergence_dict[node][-1] for node in self.neighborhood}
         return scale
             
-    def aggregate_nhood(self, nodeset, weightage, agg_count = 'default'):
+    def aggregate_nodes(self, nodeset, weightage, cluster_set = None, agg_count = 'default'):
         #Choosing the #agg_count number of highest ranked nodes for aggregation
-        if agg_count == 'default':
-            agg_scope = len(self.ranked_nhood)
-        else:
-            agg_scope = agg_count
+        # If Node aggregating Nhood
+        if cluster_set ==  None:
+            if agg_count == 'default':
+                agg_scope = len(self.ranked_nhood)
+            else:
+                agg_scope = agg_count
+
+            agg_targets = self.ranked_nhood[:agg_scope]
+            agg_targets.append(self.idx)
             
-        agg_targets = self.ranked_nhood[:agg_scope]
-        agg_targets.append(self.idx)
+        # If CH aggregating Cluster    
+        else:
+            if agg_count == 'default':
+                agg_scope = len(cluster_set)
+            else:
+                agg_scope = agg_count
+            # No need to add self index since cluster-head id already included in cluster-set
+            print(cluster_set)
+            agg_targets = random.sample(cluster_set, agg_scope)
+            print(agg_targets)
         
         scale = self.scale_update(weightage)            
         agg_model = aggregate(nodeset, agg_targets, scale)
@@ -208,16 +201,17 @@ class Servers:
             self.avgtestloss = []
             self.avgtestacc =[]
         
-    def harchy_servers(self, cluster_ids, cluster_set, node_list):
+    def harchy_servers_allnodes(self, cluster_ids, cluster_set, node_list):
         self.clusters = cluster_ids
         self.node_ids = []
-        # This works for clustered graphs. Not where graphs are reachable and clusters are overlapping
-        for cluster_id in self.clusters:
-            for node in cluster_set[cluster_id]:
-                if node not in self.node_ids and node in node_list:
-                    self.node_ids.append(node)                 
-
-                
+        if len(cluster_ids) <= 1:
+            raise Exception("Min cluster assignment for aggregation should be 2 or more")
+        else:
+            temp = []
+            for cluster_id in cluster_ids:
+                temp = temp + cluster_set[cluster_id]
+            self.node_ids = temp
+             
     def aggregate_servers(self, server_set, nodeset):
         scale = {server_id:1.0 for server_id in range(len(server_set)) }
         global_model = aggregate(server_set, self.node_ids, scale)
@@ -228,7 +222,8 @@ class Servers:
         for node in nodeset:
             node.model.load_state_dict(self.model.state_dict())
         
-    def aggregate_clusters(self, nodeset):
-        scale = {node:1.0 for node in self.node_ids}
-        server_agg_model = aggregate(nodeset, self.node_ids, scale)
+    def aggregate_clusters(self, nodeset, prop):
+        nodelist = random.sample(self.node_ids, int(prop*len(self.node_ids)))
+        scale = {node:1.0 for node in nodelist}
+        server_agg_model = aggregate(nodeset, nodelist, scale)
         self.model.load_state_dict(server_agg_model.state_dict())
