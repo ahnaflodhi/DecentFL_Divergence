@@ -126,7 +126,7 @@ class Nodes:
         if rnd == 0:
             self.ranked_nhood = self.neighborhood
         else:
-            prev_performace = {neighbor:sum(divergence[-sort_scope:]) for neighbor, divergence in target.items()}
+            prev_performance = {neighbor:sum(divergence[-sort_scope:]) for neighbor, divergence in target.items()}
             
             if sort_type == 'min':
 #                     sorted_nhood ={k: v for k, v in sorted(prev_performance.items(), key=lambda item: item[1])}
@@ -147,26 +147,26 @@ class Nodes:
             scale = {node:self.divergence_dict[node][-1] for node in self.neighborhood}
         return scale
             
-    def aggregate_nodes(self, nodeset, weightage, cluster_set = None, agg_count = 'default'):
+    def aggregate_nodes(self, nodeset, weightage, cluster_set = None, agg_prop = 0.6):
         #Choosing the #agg_count number of highest ranked nodes for aggregation
         # If Node aggregating Nhood
-        if cluster_set ==  None:
-            if agg_count == 'default':
-                agg_scope = len(self.ranked_nhood)
-            else:
-                agg_scope = agg_count
-
-            agg_targets = self.ranked_nhood[:agg_scope]
-            agg_targets.append(self.idx)
-            
+        if cluster_set == None:
+            agg_scope = int(np.floor(agg_prop * len(self.ranked_nhood)))
+            if agg_scope >= 1 and agg_scope <= len(self.ranked_nhood):
+                try:
+                    agg_targets = self.ranked_nhood[:agg_scope]
+                    agg_targets.append(self.idx)
+                except:
+                    print(f'Agg_scope:{agg_scope} does not conform to neighborhood {len(self.ranked_nhood)}')
         # If CH aggregating Cluster    
         else:
-            if agg_count == 'default':
-                agg_scope = len(cluster_set)
-            else:
-                agg_scope = agg_count
-            # No need to add self index since cluster-head id already included in cluster-set
-            agg_targets = random.sample(cluster_set, agg_scope)
+            agg_scope = int(np.floor(agg_prop * len(cluster_set)))
+            if agg_scope >= 1 and agg_scope <= len(cluster_set):
+                try:
+                    # No need to add self index since cluster-head id already included in cluster-set
+                    agg_targets = random.sample(cluster_set, agg_scope)
+                except:
+                    print(f'Agg_scope {agg_scope} does not conform to size of Cluster_Set {len(cluster_set)}')
         
         scale = self.scale_update(weightage)            
         agg_model = aggregate(nodeset, agg_targets, scale)
