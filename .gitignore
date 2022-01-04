@@ -1,6 +1,6 @@
 Results/
 data/
 *.ipynb
-__pycache__
+__pycache__/
 .*
 !.gitignore

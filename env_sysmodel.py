@@ -206,7 +206,10 @@ class FL_modes(Nodes):
             aggregate(self.nodeset, node_pair, scale)
     
     def clshead_aggregate_round(self, cluster_head, cluster_set, prop, weightage = 'equal'):
-        agg_count = int(prop * len(cluster_set))
+        
+        agg_count = int(np.floor(prop * len(cluster_set)))
+        if agg_count < 1:
+            agg_count = 1
         self.nodeset[cluster_head].aggregate_nodes(self.nodeset, weightage, cluster_set = cluster_set, agg_count = agg_count)
         # Load CH model on all cluster nodes
         for node in cluster_set:
@@ -228,7 +231,6 @@ class FL_modes(Nodes):
                 ch_pairs.append(temp)
                 
         for ch_pair in ch_pairs:
-            print(ch_pair)
             scale = {ch:1.0 for ch in ch_list}
             aggregate(self.nodeset, ch_pair, scale)
             self.nodeset[ch_pair[1]].model.load_state_dict(self.nodeset[ch_pair[0]].model.state_dict())
@@ -239,7 +241,10 @@ class FL_modes(Nodes):
         elif weightage == 'proportional':
             scale = {i:self.nodeset[i].divergence_dict[i][-1] for i in range(len(self.nodeset))}
         nodelist = list(range(len(self.nodeset)))
-        sel_nodes = random.sample(nodelist, int(prop * len(nodelist)))
+        agg_count =int(np.floor(prop * len(nodelist)))
+        if agg_count < 1:
+            agg_count = 1
+        sel_nodes = random.sample(nodelist, agg_count)
         agg_model = aggregate(self.nodeset, sel_nodes, scale)
         self.cfl_model.load_state_dict(agg_model.state_dict())
                           
@@ -250,8 +255,7 @@ class FL_modes(Nodes):
         ref_dict = self.nodeset[0].model.state_dict()
         for cluster in cluster_id:
             for layer in ref_dict.keys():
-                ref_dict[layer] = torch.stack([self.nodeset[node].model.state_dict()[layer].float() for node in cluster_set[cluster]], 0).mean(0)
-            
+                ref_dict[layer] = torch.stack([self.nodeset[node].model.state_dict()[layer].float() for node in cluster_set[cluster]], 0).mean(0)       
             
     def global_avgs(self):
         temp_trgloss = []

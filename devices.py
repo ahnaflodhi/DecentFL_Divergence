@@ -166,9 +166,7 @@ class Nodes:
             else:
                 agg_scope = agg_count
             # No need to add self index since cluster-head id already included in cluster-set
-            print(cluster_set)
             agg_targets = random.sample(cluster_set, agg_scope)
-            print(agg_targets)
         
         scale = self.scale_update(weightage)            
         agg_model = aggregate(nodeset, agg_targets, scale)
