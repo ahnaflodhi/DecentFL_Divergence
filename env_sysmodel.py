@@ -206,10 +206,7 @@ class FL_modes(Nodes):
             aggregate(self.nodeset, node_pair, scale)
     
     def clshead_aggregate_round(self, cluster_head, cluster_set, prop, weightage = 'equal'):
-        agg_count = int(np.floor(prop * len(cluster_set)))
-        if agg_count < 1:
-            agg_count = 1
-        self.nodeset[cluster_head].aggregate_nodes(self.nodeset, weightage, cluster_set = cluster_set, agg_count = agg_count)
+        self.nodeset[cluster_head].aggregate_nodes(self.nodeset, weightage, cluster_set = cluster_set, agg_prop = 0.6)
         # Load CH model on all cluster nodes
         for node in cluster_set:
             self.nodeset[node].model.load_state_dict(self.nodeset[cluster_head].model.state_dict())
