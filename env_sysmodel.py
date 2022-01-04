@@ -206,7 +206,6 @@ class FL_modes(Nodes):
             aggregate(self.nodeset, node_pair, scale)
     
     def clshead_aggregate_round(self, cluster_head, cluster_set, prop, weightage = 'equal'):
-        
         agg_count = int(np.floor(prop * len(cluster_set)))
         if agg_count < 1:
             agg_count = 1

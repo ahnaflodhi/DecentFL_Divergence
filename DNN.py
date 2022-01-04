@@ -107,10 +107,9 @@ def aggregate(model_list, node_list, scale, noise = False):
         models = [Net.add_noise(model) for model in models]
 #         for k in ref_dict.keys():
 #             ref_dict[k] = torch.stack([torch.mul(models[i].state_dict()[k].float(), scale[node]) for i, node in enumerate(node_list)], 0).mean(0)
-    else:
-        for k in ref_dict.keys():
+    for k in ref_dict.keys():
 #             ref_dict[k] = torch.stack([torch.mul(model_list[node].model.state_dict()[k].float(), scale[node]) for node in node_list], 0).mean(0)
-            ref_dict[k] = torch.stack([model_list[node].model.state_dict()[k].float() for node in node_list], 0).mean(0)
+        ref_dict[k] = torch.stack([models[i].state_dict()[k].float() for i, node in enumerate(node_list)], 0).mean(0)
     agg_model.load_state_dict(ref_dict)
     
     del models
